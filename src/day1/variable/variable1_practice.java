@@ -22,7 +22,6 @@ public class variable1_practice {
         // 전역변수의 배열을 가진 클래스를 인스턴스화 하고,
         // 인스턴스화된 배열을 새롭게 str_array 변수에 초기값으로 선언합니다.
         // 배열의 길이를 통해 for 반복문을 이용하여 배열의 값들을 호출할 수 있습니다.
-        // 만약 지역변수에 인스턴스화된 전역변수를 초기값으로 넣으면 메모리 주소가 들어오는 건가요?.....
         for (String s : str_array_new) {
             System.out.println(s);
         }
