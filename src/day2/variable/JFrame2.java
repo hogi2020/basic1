@@ -6,6 +6,9 @@ public class JFrame2 {
     public static void main(String[] args) {
         JFrame jFrame = new JFrame();
 
+        // 창이 닫히면 Runtime 상태를 자동으로 종료합니다.
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         String title = "카카오톡";
 
         jFrame.setTitle(title);
