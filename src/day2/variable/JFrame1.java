@@ -11,9 +11,11 @@ import javax.swing.JFrame;
 public class JFrame1 {
     public static void main(String[] args) {
         // JFrame은 창을 관리하는 클래스 입니다.
+        // 클래스를 호출할 수 있습니다.
+        // 이미 JVM이 구현해 놓은 많은 클래스가 있습니다.
         JFrame jFrame = new JFrame();
 
-        String title = "전자계산기";
+        String title = "카카오톡";
         jFrame.setTitle(title);
 
         // setSize는 창의 크기를 설정하는 메소드 입니다.
@@ -22,5 +24,8 @@ public class JFrame1 {
         // setVisible은 창을 화면에 표시하는 메소드 입니다.
         // 윈도우 창은 메모리를 통해 동작하므로 직접 인터럽트를 설정합니다.
         jFrame.setVisible(true);
+
+        // 인터럽트를 자동으로 하는 코드
+
     }
 }
