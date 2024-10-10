@@ -12,5 +12,9 @@ public class JFrame1 {
         // 원시형 변수는 호출하면 값, 참조형 변수는 주소번지를 출력합니다.
         System.out.println(frame);
         System.out.println(frame.toString());
+
+        // String 클래스를 인스턴스화하여 호출
+        String s = new String("이순신");
+        System.out.println(s);
     }
 }
