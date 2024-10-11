@@ -1,8 +1,13 @@
 package day4.variable;
 
 class Member {
+    /*
+    static이 사용된 변수는 프로그램 실행 시, 메모리에 할당되므로
+    해당 변수는 객체가 다르더라도 동일한 주소값을 가집니다.
+    그러므로 최종적으로 재선언된 값이 할당됩니다.
+     */
     int age;
-    String name;
+    static String name;
     String addr;
 }
 
