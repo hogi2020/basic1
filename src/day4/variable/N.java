@@ -14,6 +14,6 @@ public class N {
         N n = new N();
 
         String name = null;
-        n.methodB(name);
+        n.methodB("배");
     }/////////end of main
 }
