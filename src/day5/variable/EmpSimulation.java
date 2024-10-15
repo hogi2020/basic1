@@ -1,11 +1,9 @@
 package day5.variable;
-
 /*
 7566 - scott - 1900.56
 7499 - tiger - 2700
 7390 - king - 3100
  */
-
 public class EmpSimulation {
     public static void main(String[] args) {
 

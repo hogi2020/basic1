@@ -24,7 +24,7 @@ public class CarCreate {
     }
 
     // 클래스 객체 반환을 위한 정적 팩토리 메서드 생성
-    public static CarCreate createE(String name, String color, int year, int oil) {
+    public CarCreate createE(String name, String color, int year, int oil) {
         return new CarCreate(name, color, year, oil, CarType.ELECTRIC);
     }
 
@@ -36,7 +36,7 @@ public class CarCreate {
         System.out.println(ecar.type);
         System.out.println(ecar.color);
 
-        ecar = CarCreate.createE("테슬라", "BLACK", 2023, 90);
+        ecar.createE("테슬라", "BLACK", 2023, 90);
         System.out.println(ecar.color);
 
     }
