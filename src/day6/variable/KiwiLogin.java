@@ -14,17 +14,28 @@ import java.awt.event.ActionListener;
 public class KiwiLogin implements ActionListener {
     // 선언부
     JFrame frame = new JFrame();
-    JButton jbtn_login = new JButton("Login");  // 이벤트 소스
+    JTextField jtf_nickName = new JTextField("");      // North
+    JButton jbtn_login = new JButton("Login");    // South
+    JButton jbtn_join = new JButton("회원가입");   // Center
+
+    // 생성자는 반환 타입이 없습니다. 반환 타입이 있다면 메소드 입니다.
+    // 디폴트 생성자는 생략할 수 있지만 생성자는 외부의 메소드를 호출할 수 있습니다.
+    public KiwiLogin() {
+        // initDisplay();
+    }
 
     // 화면그리기 메소드 선언
     public void initDisplay() {
         // 이벤트 소스(login)와 이벤트 핸들러 클래스(Action..를 구현한 클래스)
         jbtn_login.addActionListener(this);
+        jtf_nickName.addActionListener(this);
+        frame.add("North", jtf_nickName);
         frame.add("South", jbtn_login);
+        frame.add("Center", jbtn_join);
         frame.setTitle("키위톡 로그인");
         frame.setSize(300, 500);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     // 메인 메소드
     public static void main(String[] args) {
@@ -40,11 +51,23 @@ public class KiwiLogin implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-        System.out.println(command);
+        Object source = e.getSource();
+        System.out.printf("%s, %s\n", command, source.toString());
 
         if ("Login".equals(command)) {
-            KiwiTalk kt = new KiwiTalk();
+            System.out.println(source == jbtn_login);
+            frame.dispose();
+
+        } else if (jtf_nickName == source) {
+            System.out.println("사용자가 입력한 닉네임 : " + jtf_nickName.getText());
+            String nickName = jtf_nickName.getText();
+            jtf_nickName.setText("");
+            KiwiTalk kt = new KiwiTalk(nickName);
             kt.initDisplay();
+            frame.dispose();
+
+        } else if ("회원가입".equals(command)) {
+
         }
     }
 } //////////// end of KiwiLogin
