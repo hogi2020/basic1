@@ -6,9 +6,10 @@ public class KiwiTalk {
     // 선언부
     String nickName = null;
     JFrame frame = new JFrame();
-    public KiwiTalk() {}
+
     // 파라미터가 없는 생성자를 디폴트 생성자라고 합니다.
     // 디폴트 생성자는 JVM이 대신 제공해줍니다.
+    public KiwiTalk() {}
     public KiwiTalk(String nickName){   //nickName = apple
         System.out.println(nickName);   //지변 - apple
         this.nickName = nickName;
