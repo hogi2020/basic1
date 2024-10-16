@@ -1,6 +1,7 @@
 package day6.variable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -13,27 +14,46 @@ public class OjmLogin implements ActionListener {
     JButton btn_regi = new JButton("회원가입");
     JTextField txt_nickName = new JTextField("");
 
+    // Panel 선언부
+    JPanel jp_north = new JPanel();
+    JPanel jp_south = new JPanel();
+    JPanel jp_center = new JPanel();
+    JLabel label_nick = new JLabel("닉네임");
+
     // 배열 변수
     String[] nickList = {"hogi", "apple", "orange", "blue"};
 
 
     // 로그인 화면 구성 메소드
     public void inDisplay() {
-        // 로그인 윈도우 레이아웃
-        frame.setTitle("OjmTalk Login");
-        frame.setSize(300, 500);
-        frame.setVisible(true);
 
-        // 버튼과 텍스트 박스 추가
-        frame.add("South", btn_login);
-        frame.add("Center", btn_regi);
-        frame.add("North", txt_nickName);
+        // 각 패널 레이아웃 구성
+        jp_center.setBackground(new Color(8, 40, 196));
+        //////////////////
+        jp_north.setLayout(new BorderLayout());
+        jp_north.add("West", label_nick);
+        jp_north.add("Center", txt_nickName);
+        //////////////////
+        jp_south.setLayout(new GridLayout(1, 2));
+        jp_south.add(btn_login);
+        jp_south.add(btn_regi);
+        //////////////////
+
+        // 각 패널을 로그인 윈도우 레이아웃에 넣기
+        frame.add("Center", jp_center);
+        frame.add("North", jp_north);
+        frame.add("South", jp_south);
 
         // addActionListener를 통해 JTextField 컴포넌트에 액션 리스너를 추가합니다.
         // this는 현재 클래스가 ActionListener 인터페이스를 구현하고 있다는 것을 나타냅니다.
         btn_login.addActionListener(this);
         btn_regi.addActionListener(this);
         txt_nickName.addActionListener(this);
+
+        // 로그인 윈도우 레이아웃
+        frame.setTitle("OjmTalk Login");
+        frame.setSize(300, 500);
+        frame.setVisible(true);
 
         // 창 종료 후, 프로그램 종료
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,6 +77,12 @@ public class OjmLogin implements ActionListener {
         // 인스턴스 값을 통한 동작 처리
         if ("Login".equals(command)) {
             String nickName = txt_nickName.getText();       // 지역변수 선언 및 초기화
+
+            if (nickName.equals("")) {
+                JOptionPane.showMessageDialog(frame, "닉네임을 입력하세요");
+                txt_nickName.requestFocus();
+                return;
+            }
 
             for (String nick : nickList) {                  // for문이 Stream API 대비 시간&공간적으로 유리
                 // 등록된 닉네임 검사 및 후속 진행
