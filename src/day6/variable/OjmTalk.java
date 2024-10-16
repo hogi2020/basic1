@@ -15,7 +15,6 @@ public class OjmTalk {
         this.nickName = nickName;
     }
 
-
     // Talk 실행창 화면 구현
     public void inDisplay() {
         frame.setTitle(nickName + "님의 대화창");

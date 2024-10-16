@@ -3,6 +3,7 @@ package day6.variable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 // OjmLogin 클래스에 이벤트 발생 시, 동작 구현을 위해 ActionListener를 상속
 public class OjmLogin implements ActionListener {
@@ -11,6 +12,9 @@ public class OjmLogin implements ActionListener {
     JButton btn_login = new JButton("Login");
     JButton btn_regi = new JButton("회원가입");
     JTextField txt_nickName = new JTextField("");
+
+    // 배열 변수
+    String[] nickList = {"hogi", "apple", "orange", "blue"};
 
 
     // 로그인 화면 구성 메소드
@@ -52,16 +56,18 @@ public class OjmLogin implements ActionListener {
 
         // 인스턴스 값을 통한 동작 처리
         if ("Login".equals(command)) {
-            String nickName = txt_nickName.getText();   // 지역변수 선언 및 초기화
+            String nickName = txt_nickName.getText();       // 지역변수 선언 및 초기화
 
-            // 등록된 닉네임 검사 및 후속 진행
-            if ("hogi".equals(nickName)) {
-                OjmTalk otalk = new OjmTalk(nickName);  // OjmTalk 클래스 가져오기 | Talk 실행창
-                otalk.inDisplay();                      // 실행창 실행
-                frame.dispose();                        // 실행창 실행 시, Login 화면 닫기
-            } else {
-                System.out.println(nickName + "은 등록되지 않은 닉네임 입니다.");
-            }////////////// end of 닉네임 검사 if문
+            for (String nick : nickList) {                  // for문이 Stream API 대비 시간&공간적으로 유리
+                // 등록된 닉네임 검사 및 후속 진행
+                if (nickName.equals(nick)) {
+                    OjmTalk otalk = new OjmTalk(nickName);  // OjmTalk 클래스 가져오기 | Talk 실행창
+                    otalk.inDisplay();                      // 실행창 실행
+                    frame.dispose();                        // 실행창 실행 시, Login 화면 닫기
+                    break;
+                }////////////// end of 닉네임 검사 if문
+            }/////////// end of 닉네임 검사 for문
+            System.out.println(nickName + "은 등록되지 않은 닉네임 입니다.");
 
         } else if ("회원가입".equals(command)) {
             System.out.println("회원가입 버튼을 누르셨습니다.");
