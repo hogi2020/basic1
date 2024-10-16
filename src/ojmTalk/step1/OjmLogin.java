@@ -1,10 +1,9 @@
-package day6.variable;
+package ojmTalk.step1;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 // OjmLogin 클래스에 이벤트 발생 시, 동작 구현을 위해 ActionListener를 상속
 public class OjmLogin implements ActionListener {
@@ -37,7 +36,7 @@ public class OjmLogin implements ActionListener {
         jp_south.setLayout(new GridLayout(1, 2));
         jp_south.add(btn_login);
         jp_south.add(btn_regi);
-        //////////////////
+
 
         // 각 패널을 로그인 윈도우 레이아웃에 넣기
         frame.add("Center", jp_center);
@@ -98,5 +97,5 @@ public class OjmLogin implements ActionListener {
         } else if ("회원가입".equals(command)) {
             System.out.println("회원가입 버튼을 누르셨습니다.");
         }
-    }//////////////end of actionPerformed
+    }////////////// end of actionPerformed
 }//////////// end of OjmLogin
