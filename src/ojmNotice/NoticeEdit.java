@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class NoticeEdit extends JFrame implements ActionListener {
+    // 전역 변수 생성
     String item_no = null;
     String item_title = null;
     String item_author = null;
@@ -73,6 +74,10 @@ public class NoticeEdit extends JFrame implements ActionListener {
     // 동작 구현 블록
     @Override
     public void actionPerformed(ActionEvent e) {
+        // 날짜 갱신
+        now = new Date();
+        date_format = formatter.format(now);
+        txt_date.setText(date_format);
 
         Object obj = e.getSource();
         this.item_no = txt_no.getText();
@@ -91,9 +96,13 @@ public class NoticeEdit extends JFrame implements ActionListener {
                 txt_no.requestFocus();
                 return;
             } else {
-                // Save 활성화 시, 전역변수에 할당
-                System.out.println("Save 객체가 할당되었습니다.");
+                // Save 활성화 시, 멤버변수에 할당
                 this.save_obj = btn_save.getText();
+
+                // 텍스트 박스 초기화
+                txt_no.setText("");
+                txt_title.setText("");
+                txt_author.setText("");
             }
         }
 
@@ -101,7 +110,7 @@ public class NoticeEdit extends JFrame implements ActionListener {
         if (obj == btn_cancel) {this.dispose();}
     }
 
-    // Edit창 실행 메소드
+    // Edit 창 실행 메소드
     public static void main(String[] args) {
         NoticeEdit notE = new NoticeEdit();
         notE.inDisplay();
