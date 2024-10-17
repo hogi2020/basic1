@@ -86,10 +86,12 @@ public class NoticeEdit extends JFrame implements ActionListener {
 
             // 입력란이 공란이면 입력 요청창 활성화
             if (item_no.equals("") || item_title.equals("") || item_author.equals("")) {
+                // 공란 발생 시, 알림창 호출
                 JOptionPane.showMessageDialog(this, "공란이 있습니다.");
                 txt_no.requestFocus();
                 return;
             } else {
+                // Save 활성화 시, 전역변수에 할당
                 System.out.println("Save 객체가 할당되었습니다.");
                 this.save_obj = btn_save.getText();
             }

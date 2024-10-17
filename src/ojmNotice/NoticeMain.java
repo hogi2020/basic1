@@ -93,17 +93,18 @@ public class NoticeMain extends JFrame implements ActionListener {
             ne.setVisible(true);
         }
 
-        // edit save 실행
+        // Edit save 버튼 클릭 시, Table에 입력값 저장
         if (ne.save_obj == "Save") {
             System.out.println("Save 버튼이 클릭되었습니다.");
             addData(ne.item_no, ne.item_title, ne.item_author, ne.item_date);
+            ne.save_obj = null;
         }
     }
 
 
     // 메인 메소드
     public static void main(String[] args) {
-        NoticeMain notM = new NoticeMain();
-        notM.inDisplay();
+        NoticeMain nm = new NoticeMain();
+        nm.inDisplay();
     }
 }
