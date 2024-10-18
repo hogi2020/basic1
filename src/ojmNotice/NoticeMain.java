@@ -70,12 +70,21 @@ public class NoticeMain extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+
+    // 이벤트 전달 생성자
+    public void NoticeMain(ActionEvent e) {
+        actionPerformed(e);
+    }
+
+    // 입력 메소드
     public void addData(String no, String title, String author, String date) {
         table_model.addRow(new Object[]{no, title, author, date});
     }
+    // 삭제 메소드
     public void delData(int no) {
         table_model.removeRow(no);
     }
+
 
     // 동작 구현 블록
     @Override
