@@ -72,7 +72,7 @@ public class XxxMain extends JFrame implements ActionListener {
         if(obj == btn_ins) {
             sub.setTitle(btn_ins.getText());
             sub.setSize(400, 600);
-            sub.setVisible(true);
+            sub.setVisible(false);
         }
 
         // 수정 버튼 눌렀을 때,
