@@ -6,15 +6,13 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
 
 public class NoticeMain extends JFrame implements ActionListener {
-    NoticeEdit ne = new NoticeEdit();
+    NoticeEdit edit = new NoticeEdit(this);
 
     // 선언부
     JPanel pnl_crud = new JPanel();
     JButton btn_create = new JButton("입력");
-    JButton btn_read = new JButton("상세");
     JButton btn_update = new JButton("수정");
     JButton btn_delete = new JButton("삭제");
     JButton btn_repaint = new JButton("새로고침");
@@ -33,7 +31,6 @@ public class NoticeMain extends JFrame implements ActionListener {
 
         // 패널 레이아웃
         pnl_crud.add("Center", btn_create);
-        pnl_crud.add("Center", btn_read);
         pnl_crud.add("Center", btn_update);
         pnl_crud.add("Center", btn_delete);
         pnl_crud.add("East", btn_repaint);
@@ -56,7 +53,6 @@ public class NoticeMain extends JFrame implements ActionListener {
 
         // 액션 리스너 등록
         btn_create.addActionListener(this);
-        btn_read.addActionListener(this);
         btn_update.addActionListener(this);
         btn_delete.addActionListener(this);
         btn_repaint.addActionListener(this);
@@ -71,13 +67,8 @@ public class NoticeMain extends JFrame implements ActionListener {
     }
 
 
-    // 이벤트 전달 생성자
-    public void NoticeMain(ActionEvent e) {
-        actionPerformed(e);
-    }
-
     // 입력 메소드
-    public void addData(String no, String title, String author, String date) {
+    public void addData(int no, String title, String author, String date) {
         table_model.addRow(new Object[]{no, title, author, date});
     }
     // 삭제 메소드
@@ -91,42 +82,20 @@ public class NoticeMain extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
 
-        // 날짜 갱신
-        ne.now = new Date();
-        ne.date_format = ne.formatter.format(ne.now);
-        ne.txt_date.setText(ne.date_format);
-
         // 기능별 Edit 창 실행
         if (obj == btn_create) {
-            ne.setTitle(btn_create.getText());
-            ne.setVisible(true);
-        }
-        else if (obj == btn_read) {
-            ne.setTitle(btn_read.getText());
-            ne.setVisible(true);
+            edit.setTitle(btn_create.getText());
+            edit.setVisible(true);
         }
         else if (obj == btn_update) {
-            ne.setTitle(btn_update.getText());
-            ne.setVisible(true);
+            edit.setTitle(btn_update.getText());
+            edit.setVisible(true);
         }
         else if (obj == btn_delete) {
-            ne.label_no.setText("삭제할 행 번호(위치):");
-            ne.setTitle(btn_delete.getText());
-            ne.setVisible(true);
+            edit.setTitle(btn_delete.getText());
+            edit.setVisible(true);
         }
 
-        // Edit save 버튼 클릭 시, Table에 입력값 저장
-        if (ne.save_obj == "Save") {
-            System.out.println("Save 버튼이 클릭되었습니다.");
-
-            // 기능 동작 구현
-            if (ne.getTitle() == "입력") {
-                addData(ne.item_no, ne.item_title, ne.item_author, ne.item_date);
-            } else if (ne.getTitle() == "삭제") {
-                delData(Integer.parseInt(ne.item_no) - 1);
-            }
-            ne.save_obj = null;
-        }
     }
 
     // 메인 메소드

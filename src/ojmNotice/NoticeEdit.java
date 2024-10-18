@@ -4,43 +4,63 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class NoticeEdit extends JFrame implements ActionListener {
-    // 전역 변수 생성
-    String item_no = null;
+    NoticeMain main = null;
+
+    // 멤버 변수 생성
+    int item_no;
     String item_title = null;
     String item_author = null;
     String item_date = null;
-    String save_obj = null;
-
-    // 선언부 | 날짜
-    Date now = new Date();
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    String date_format = formatter.format(now);
 
     // 선언부 | Center-label 패널 인스턴스
     JPanel pnl_edit_l = new JPanel(new GridLayout(4, 2));
-    JLabel label_no = new JLabel("No.");
-    JLabel label_title = new JLabel("Title");
-    JLabel label_author = new JLabel("Author");
-    JLabel label_date = new JLabel("Date");
+    JLabel label_no = new JLabel("  No.");
+    JLabel label_title = new JLabel("  Title");
+    JLabel label_author = new JLabel("  Author");
+    JLabel label_date = new JLabel("  Date");
 
     // 선언부 | Center-text
     JTextField txt_no = new JTextField();
     JTextField txt_title = new JTextField();
     JTextField txt_author = new JTextField();
-    JTextField txt_date = new JTextField(date_format);  // 선언부|날짜의 가공데이터 사용
+    JTextField txt_date = new JTextField();  // 선언부|날짜의 가공데이터 사용
 
     // 선언부 | South 패널 인스턴스
     JPanel pnl_edit_s = new JPanel();
     JButton btn_save = new JButton("Save");
     JButton btn_cancel = new JButton("Cancel");
 
-    public NoticeEdit() {
+    public NoticeEdit() {}
+    public NoticeEdit(NoticeMain main) {
+        this.main = main;
         inDisplay();
     }
+
+    // 에디터창 커스텀 Display
+    public void customDisplay(String command) {
+        Container cont = this.getContentPane();
+
+        if (command.equals("입력")) {
+            this.add("Center", pnl_edit_l);
+
+            this.label_no.setText("  No.");
+            this.setTitle(command);
+            this.setVisible(true);
+        }
+        else if (command.equals("삭제")) {
+            cont.remove(pnl_edit_l);
+
+            this.label_no.setText("  삭제할 행 번호(위치):");
+            this.setTitle(command);
+            this.setVisible(true);
+        }
+    }
+
+
+
+
 
     // 공지사항 Edit창 실행 메소드
     public void inDisplay() {
@@ -58,14 +78,14 @@ public class NoticeEdit extends JFrame implements ActionListener {
         pnl_edit_s.add("Center", btn_cancel);
 
         // 액션 리스너 등록
-        btn_save.addActionListener((this));
+        btn_save.addActionListener(this);
         btn_cancel.addActionListener(this);
 
         // 기본 레이아웃
         this.add("Center", pnl_edit_l);
         this.add("South", pnl_edit_s);
-        this.setSize(300, 300);
-        this.setLocationRelativeTo(null);
+        this.setSize(300, 200);
+        this.setLocationRelativeTo(null);   // 생성창 위치 가운데
         this.setVisible(false);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
@@ -74,40 +94,19 @@ public class NoticeEdit extends JFrame implements ActionListener {
     // 동작 구현 블록
     @Override
     public void actionPerformed(ActionEvent e) {
-        // 날짜 갱신
-        now = new Date();
-        date_format = formatter.format(now);
-        txt_date.setText(date_format);
 
         Object obj = e.getSource();
-        this.item_no = txt_no.getText();
+        // this.item_no = Integer.parseInt(txt_no.getText());   //null로 인해 오류
         this.item_title = txt_title.getText();
         this.item_author = txt_author.getText();
         this.item_date = txt_date.getText();
 
         // Save 버튼 동작 설정
         if (obj == btn_save) {
-            System.out.println("Save가 실행됩니다.");
-
-            // 입력란이 공란이면 입력 요청창 활성화
-            if (item_no.equals("") || item_title.equals("") || item_author.equals("")) {
-                // 공란 발생 시, 알림창 호출
-                JOptionPane.showMessageDialog(this, "공란이 있습니다.");
-                txt_no.requestFocus();
-                return;
-            } else {
-                // Save 활성화 시, 멤버변수에 할당
-                this.save_obj = btn_save.getText();
-
-                // 텍스트 박스 초기화
-                txt_no.setText("");
-                txt_title.setText("");
-                txt_author.setText("");
-            }
+            System.out.println("Save 버튼을 눌렀습니다.");
         }
-
         // Cancel 버튼 동작 설정
-        if (obj == btn_cancel) {this.dispose();}
+        else if (obj == btn_cancel) {this.dispose();}
     }
 
     // Edit 창 실행 메소드

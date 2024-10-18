@@ -63,6 +63,26 @@ public class XxxMain extends JFrame implements ActionListener {
         new XxxMain();
     }
 
+    // 공지사항 목록을 출력하기
+    public void xxxList() {
+        System.out.println("xxxList 호출");
+        // 데이터 배열 생성
+        Object[][] objs = {
+                {1, "공지사항1", "홍길동"},
+                {2, "공지사항2", "이순신"},
+                {3, "공지사항3", "리어왕"},
+        };
+
+        Container cont = this.getContentPane();
+        if(jsp != null) {
+            cont.remove(jsp);
+        }
+        dtm = new DefaultTableModel(objs, cols);
+        jtable = new JTable(dtm);
+        jsp = new JScrollPane(jtable);
+        this.add("Center", jsp);
+        cont.revalidate();
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -72,13 +92,17 @@ public class XxxMain extends JFrame implements ActionListener {
         if(obj == btn_ins) {
             sub.setTitle(btn_ins.getText());
             sub.setSize(400, 600);
-            sub.setVisible(false);
+            sub.setVisible(true);
         }
-
         // 수정 버튼 눌렀을 때,
         // 상세보기 버튼 눌렀을 때,
         // 삭제 버튼 눌렀을 때,
+        else if(obj == btn_exit) {
+            this.dispose();
+        }
         // 전체조회 버튼 눌렀을 때,
-
+        else if(obj == btn_sel) {
+            xxxList();
+        }
     }
 }

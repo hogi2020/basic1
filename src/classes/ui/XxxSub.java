@@ -58,7 +58,8 @@ public class XxxSub extends JDialog implements ActionListener {
         // 현재 창은 닫고 부모창의 전체조회가 처리되도록 합니다.
         // 왜냐하면 새로운 글이 입력되었으니까. 추가된 글까지 출력하기
         if(obj == btn_save) {
-
+            main.xxxList();
+            this.dispose();
         }
         else if(obj == btn_close) {
             this.dispose();
