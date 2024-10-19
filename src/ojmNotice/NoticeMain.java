@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 
 public class NoticeMain extends JFrame implements ActionListener {
     NoticeEdit edit = new NoticeEdit(this);
@@ -68,34 +69,38 @@ public class NoticeMain extends JFrame implements ActionListener {
 
 
     // 입력 메소드
-    public void addData(int no, String title, String author, String date) {
-        table_model.addRow(new Object[]{no, title, author, date});
+    public void addData(int no, String title, String author) {
+        // long 타입으로 현재 시간 반환
+        // System.currentTimeMillis() 시스템 시간에 기반한 밀리초 단위의 시간값을 반환
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        String currentTime = simpleDateFormat.format(System.currentTimeMillis());
+
+        table_model.addRow(new Object[]{no, title, author, currentTime});
     }
     // 삭제 메소드
     public void delData(int no) {
-        table_model.removeRow(no);
+        // 테이블 행 개수 가져오기
+        int rowCount = table_model.getRowCount();
+
+        // 값이 일치하는 행의 인덱스를 반환하여 삭제
+        for (int row = 0; row < rowCount; row++) {
+            if (table_model.getValueAt(row, 0).equals(no)) {
+                table_model.removeRow(row);
+            }
+        }
     }
 
 
     // 동작 구현 블록
     @Override
     public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
         Object obj = e.getSource();
 
         // 기능별 Edit 창 실행
-        if (obj == btn_create) {
-            edit.setTitle(btn_create.getText());
-            edit.setVisible(true);
+        if (obj == btn_create || obj == btn_update || obj == btn_delete) {
+            edit.customDisplay(command);
         }
-        else if (obj == btn_update) {
-            edit.setTitle(btn_update.getText());
-            edit.setVisible(true);
-        }
-        else if (obj == btn_delete) {
-            edit.setTitle(btn_delete.getText());
-            edit.setVisible(true);
-        }
-
     }
 
     // 메인 메소드
