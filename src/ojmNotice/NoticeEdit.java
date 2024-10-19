@@ -18,10 +18,10 @@ public class NoticeEdit extends JFrame implements ActionListener {
     // 선언부 | Center-label 패널 인스턴스
     JPanel pnl_edit_create = new JPanel(new GridLayout(3, 2));
     JPanel pnl_edit_delete = new JPanel(new GridLayout(1, 2));
-    JLabel label_no = new JLabel("  No.");
+    JLabel label_no = new JLabel();
     JLabel label_title = new JLabel("  Title");
     JLabel label_author = new JLabel("  Author");
-    JLabel label_delete = new JLabel("  삭제할 행 번호");
+    JLabel label_delete = new JLabel("  삭제할 행 No. :");
 
     // 선언부 | Center-text
     JTextField txt_no = new JTextField();
@@ -51,6 +51,11 @@ public class NoticeEdit extends JFrame implements ActionListener {
             cont.remove(pnl_edit_delete);
             this.add("Center", pnl_edit_create);
             this.setSize(300, 170);
+            if ((command.equals("입력"))) {
+                label_no.setText("  No.");
+            } else {
+                label_no.setText("  수정할 행 No. :");
+            }
         }
         else if (command.equals("삭제")) {
             cont.remove(pnl_edit_create);
@@ -121,15 +126,19 @@ public class NoticeEdit extends JFrame implements ActionListener {
                 txt_author.setText("");
                 this.dispose();
             }
+            else if (this.getTitle().equals("수정")) {
+                this.item_no = Integer.parseInt(txt_no.getText());
+                this.item_title = txt_title.getText();
+                this.item_author = txt_author.getText();
+                main.updData(item_no, item_title, item_author);
+                txt_no.setText("");
+                txt_title.setText("");
+                txt_author.setText("");
+                this.dispose();
+            }
             else if (this.getTitle().equals("삭제")) {
                 this.item_del = Integer.parseInt(txt_delete.getText());
-                try {
-                    main.delData(item_del);
-                    txt_delete.setText("");
-                    this.dispose();
-                } catch (Exception error) {
-                    JOptionPane.showMessageDialog(this, "삭제할 행이 없습니다. 다시 입력해주세요.");
-                }
+                main.delData(item_del);
             }
         }
     }

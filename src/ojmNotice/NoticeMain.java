@@ -16,7 +16,7 @@ public class NoticeMain extends JFrame implements ActionListener {
     JButton btn_create = new JButton("입력");
     JButton btn_update = new JButton("수정");
     JButton btn_delete = new JButton("삭제");
-    JButton btn_repaint = new JButton("새로고침");
+    JButton btn_exit = new JButton("종료");
 
     // 선언부 | 테이블 관련 인스턴스
     String[] colName = {"No.", "Title", "Author", "Date"};
@@ -34,8 +34,8 @@ public class NoticeMain extends JFrame implements ActionListener {
         pnl_crud.add("Center", btn_create);
         pnl_crud.add("Center", btn_update);
         pnl_crud.add("Center", btn_delete);
-        pnl_crud.add("East", btn_repaint);
-        btn_repaint.setBackground(Color.ORANGE);
+        pnl_crud.add("East", btn_exit);
+        btn_exit.setBackground(Color.ORANGE);
 
         // 테이블 컬럼 너비 조절 | Column Width
         table_main.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);   // 자동 창 크기 조절 off
@@ -56,7 +56,7 @@ public class NoticeMain extends JFrame implements ActionListener {
         btn_create.addActionListener(this);
         btn_update.addActionListener(this);
         btn_delete.addActionListener(this);
-        btn_repaint.addActionListener(this);
+        btn_exit.addActionListener(this);
 
         // 기본 레이아웃
         this.add("North", pnl_crud);
@@ -67,15 +67,37 @@ public class NoticeMain extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    // 날짜 입력 메소드
+    public String insetDate() {
+        // long 타입으로 현재 시간 반환
+        // System.currentTimeMillis() 시스템 시간에 기반한 밀리초 단위의 시간값을 반환
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentTime = simpleDateFormat.format(System.currentTimeMillis());
+
+        // 생성된 객체를 초기화하고, 가비지 컬렉션을 요청하여 객체 삭제
+        simpleDateFormat = null;
+        System.gc();
+
+        return currentTime;
+    }
 
     // 입력 메소드
     public void addData(int no, String title, String author) {
-        // long 타입으로 현재 시간 반환
-        // System.currentTimeMillis() 시스템 시간에 기반한 밀리초 단위의 시간값을 반환
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
-        String currentTime = simpleDateFormat.format(System.currentTimeMillis());
+        table_model.addRow(new Object[]{no, title, author, insetDate()});
+    }
+    // 수정 메소드
+    public void updData(int no, String title, String name) {
+        // 테이블 행 개수 가져오기
+        int rowCount = table_model.getRowCount();
 
-        table_model.addRow(new Object[]{no, title, author, currentTime});
+        // 값이 일치하는 행의 인덱스를 반환하여 수정
+        for (int row = 0; row < rowCount; row++) {
+            if (table_model.getValueAt(row, 0).equals(no)) {
+                table_model.setValueAt(title, row, 1);
+                table_model.setValueAt(name, row, 2);
+                table_model.setValueAt(insetDate(), row, 3);
+            }
+        }
     }
     // 삭제 메소드
     public void delData(int no) {
@@ -86,6 +108,13 @@ public class NoticeMain extends JFrame implements ActionListener {
         for (int row = 0; row < rowCount; row++) {
             if (table_model.getValueAt(row, 0).equals(no)) {
                 table_model.removeRow(row);
+                edit.txt_delete.setText("");
+                edit.dispose();
+                break;
+            }
+            else if (row == rowCount-1) {
+                edit.txt_delete.setText("");
+                JOptionPane.showMessageDialog(this, "삭제할 행이 없습니다. 다시 입력해주세요.");
             }
         }
     }
@@ -100,6 +129,9 @@ public class NoticeMain extends JFrame implements ActionListener {
         // 기능별 Edit 창 실행
         if (obj == btn_create || obj == btn_update || obj == btn_delete) {
             edit.customDisplay(command);
+        }
+        else if (obj == btn_exit) {
+            this.dispose();
         }
     }
 
