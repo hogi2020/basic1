@@ -1,4 +1,4 @@
-package talk.step1;
+package classes.ui.step1;
 
 import javax.swing.*;
 

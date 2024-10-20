@@ -1,6 +1,4 @@
-package talk.step1;
-
-import jdk.jfr.Event;
+package classes.ui.step1;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

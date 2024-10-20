@@ -1,4 +1,4 @@
-package talk.step1;
+package classes.ui.step1;
 
 public class G {
     public static void main(String[] args) {

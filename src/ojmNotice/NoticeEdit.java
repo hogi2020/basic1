@@ -1,13 +1,12 @@
 package ojmNotice;
 
-import javax.print.attribute.standard.JobMessageFromOperator;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class NoticeEdit extends JFrame implements ActionListener {
-    NoticeMain main = null;
+    TableDataFunction tdf = null;
 
     // 멤버 변수 생성
     int item_no;
@@ -35,8 +34,8 @@ public class NoticeEdit extends JFrame implements ActionListener {
     JButton btn_cancel = new JButton("Cancel");
 
     public NoticeEdit() {}
-    public NoticeEdit(NoticeMain main) {
-        this.main = main;
+    public NoticeEdit(TableDataFunction tdf) {
+        this.tdf = tdf;
         inDisplay();
     }
 
@@ -44,7 +43,6 @@ public class NoticeEdit extends JFrame implements ActionListener {
     // 에디터창 커스텀 Display
     Container cont = this.getContentPane();
     public void customDisplay(String command) {
-
         this.setTitle(command);
 
         if (command.equals("입력") || command.equals("수정")) {
@@ -100,37 +98,26 @@ public class NoticeEdit extends JFrame implements ActionListener {
     // 동작 구현 블록
     @Override
     public void actionPerformed(ActionEvent e) {
-
         Object obj = e.getSource();
-        // this.item_no = Integer.parseInt(txt_no.getText());   //null로 인해 오류
-        this.item_title = txt_title.getText();
-        this.item_author = txt_author.getText();
 
         // Cancel, Save 버튼 동작 설정
         if (obj == btn_cancel) {
             this.dispose();
         }
         else if (txt_no.getText().isEmpty() && txt_delete.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "공란입니다.");
+            JOptionPane.showMessageDialog(this, "공란이 있습니다.");
         }
         else if (obj == btn_save) {
             System.out.println("Save 버튼을 눌렀습니다.");
 
-            if (this.getTitle().equals("입력")) {
+            if (this.getTitle().equals("입력") || this.getTitle().equals("수정")) {
                 this.item_no = Integer.parseInt(txt_no.getText());
                 this.item_title = txt_title.getText();
                 this.item_author = txt_author.getText();
-                main.addData(item_no, item_title, item_author);
-                txt_no.setText("");
-                txt_title.setText("");
-                txt_author.setText("");
-                this.dispose();
-            }
-            else if (this.getTitle().equals("수정")) {
-                this.item_no = Integer.parseInt(txt_no.getText());
-                this.item_title = txt_title.getText();
-                this.item_author = txt_author.getText();
-                main.updData(item_no, item_title, item_author);
+
+                if (this.getTitle().equals("입력")) {tdf.addData(item_no, item_title, item_author);}
+                else if (this.getTitle().equals("수정")) {tdf.updData(item_no, item_title, item_author);}
+
                 txt_no.setText("");
                 txt_title.setText("");
                 txt_author.setText("");
@@ -138,14 +125,10 @@ public class NoticeEdit extends JFrame implements ActionListener {
             }
             else if (this.getTitle().equals("삭제")) {
                 this.item_del = Integer.parseInt(txt_delete.getText());
-                main.delData(item_del);
+                tdf.delData(item_del);
+                txt_delete.setText("");
+                this.dispose();
             }
         }
-    }
-
-    // Edit 창 실행 메소드
-    public static void main(String[] args) {
-        NoticeEdit notE = new NoticeEdit();
-        notE.inDisplay();
     }
 }
