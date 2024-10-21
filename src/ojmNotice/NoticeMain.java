@@ -6,11 +6,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
 
 public class NoticeMain extends JFrame implements ActionListener {
-    TableDataFunction tdf = new TableDataFunction(this);
-    NoticeEdit edit = new NoticeEdit(tdf);
+    NoticeEdit edit = new NoticeEdit(this);
 
     // 선언부
     JPanel pnl_crud = new JPanel();
@@ -75,7 +73,7 @@ public class NoticeMain extends JFrame implements ActionListener {
         String command = e.getActionCommand();
         Object obj = e.getSource();
 
-        // 기능별 Edit 창 실행
+        // 기능별 Custom Edit 창 실행
         if (obj == btn_create || obj == btn_update || obj == btn_delete) {
             edit.customDisplay(command);
         }

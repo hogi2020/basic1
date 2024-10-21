@@ -6,23 +6,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class NoticeEdit extends JFrame implements ActionListener {
-    TableDataFunction tdf = null;
+    Container cont = this.getContentPane();
+    TableDataFunction tdf = new TableDataFunction();
+    NoticeMain main = null;
+
+    // NoticeMain 인스턴스를 받는 생성자
+    public NoticeEdit() {}
+    public NoticeEdit(NoticeMain main) {
+        this.main = main;
+        inDisplay();
+    }
+
 
     // 멤버 변수 생성
     int item_no;
+    int item_del;
     String item_title = null;
     String item_author = null;
-    int item_del;
 
-    // 선언부 | Center-label 패널 인스턴스
+    // 선언부 | Center - Panel, label
     JPanel pnl_edit_create = new JPanel(new GridLayout(3, 2));
     JPanel pnl_edit_delete = new JPanel(new GridLayout(1, 2));
+
+    // 선언부 | Center - label, text
     JLabel label_no = new JLabel();
     JLabel label_title = new JLabel("  Title");
     JLabel label_author = new JLabel("  Author");
     JLabel label_delete = new JLabel("  삭제할 행 No. :");
-
-    // 선언부 | Center-text
     JTextField txt_no = new JTextField();
     JTextField txt_title = new JTextField();
     JTextField txt_author = new JTextField();
@@ -33,18 +43,12 @@ public class NoticeEdit extends JFrame implements ActionListener {
     JButton btn_save = new JButton("Save");
     JButton btn_cancel = new JButton("Cancel");
 
-    public NoticeEdit() {}
-    public NoticeEdit(TableDataFunction tdf) {
-        this.tdf = tdf;
-        inDisplay();
-    }
 
-
-    // 에디터창 커스텀 Display
-    Container cont = this.getContentPane();
+    // 공지사항 Edit창 커스텀 메소드
     public void customDisplay(String command) {
         this.setTitle(command);
 
+        // 입력, 수정창 커스텀
         if (command.equals("입력") || command.equals("수정")) {
             cont.remove(pnl_edit_delete);
             this.add("Center", pnl_edit_create);
@@ -55,6 +59,7 @@ public class NoticeEdit extends JFrame implements ActionListener {
                 label_no.setText("  수정할 행 No. :");
             }
         }
+        // 삭제창 커스텀
         else if (command.equals("삭제")) {
             cont.remove(pnl_edit_create);
             this.add("Center", pnl_edit_delete);
@@ -99,35 +104,52 @@ public class NoticeEdit extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
+        boolean bool;
 
-        // Cancel, Save 버튼 동작 설정
+        // Cancel 버튼 동작 설정
         if (obj == btn_cancel) {
             this.dispose();
         }
+        // 공란이 있을 경우 알림창 오픈
         else if (txt_no.getText().isEmpty() && txt_delete.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "공란이 있습니다.");
         }
+        // Save 버튼 동작 설정
         else if (obj == btn_save) {
             System.out.println("Save 버튼을 눌렀습니다.");
 
+            // 입력 & 수정 작업 진행
             if (this.getTitle().equals("입력") || this.getTitle().equals("수정")) {
                 this.item_no = Integer.parseInt(txt_no.getText());
                 this.item_title = txt_title.getText();
                 this.item_author = txt_author.getText();
 
-                if (this.getTitle().equals("입력")) {tdf.addData(item_no, item_title, item_author);}
-                else if (this.getTitle().equals("수정")) {tdf.updData(item_no, item_title, item_author);}
+                // 입력 & 수정 작업 메소드 호출 | TableDataFuction
+                if (this.getTitle().equals("입력")) {
+                    tdf.addData(main.table_model, item_no, item_title, item_author);
+                }
+                else if (this.getTitle().equals("수정")) {
+                    tdf.updData(main.table_model, item_no, item_title, item_author);
+                }
 
+                // 창 초기화
                 txt_no.setText("");
                 txt_title.setText("");
                 txt_author.setText("");
                 this.dispose();
             }
+            // 삭제 작업 진행
             else if (this.getTitle().equals("삭제")) {
                 this.item_del = Integer.parseInt(txt_delete.getText());
-                tdf.delData(item_del);
+                bool = tdf.delData(main.table_model, item_del);
                 txt_delete.setText("");
-                this.dispose();
+
+                // 삭제할 행이 없을 경우 알림
+                if (bool) {
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "일치하는 번호가 없습니다.");
+                }
             }
         }
     }
