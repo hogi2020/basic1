@@ -4,24 +4,22 @@ import javax.swing.table.DefaultTableModel;
 import java.text.SimpleDateFormat;
 
 public class TableDataFunction {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     // 날짜 입력 메소드
-    public String insetDate() {
+    private String insertDate() {
         // long 타입으로 현재 시간 반환
         // System.currentTimeMillis() 시스템 시간에 기반한 밀리초 단위의 시간값을 반환
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String currentTime = simpleDateFormat.format(System.currentTimeMillis());
+        return simpleDateFormat.format(System.currentTimeMillis());
 
         // 생성된 객체를 초기화하고, 가비지 컬렉션을 요청하여 객체 삭제
-        simpleDateFormat = null;
-
-        return currentTime;
+        // simpleDateFormat = null;
     }
 
 
     // 입력 메소드
     public void addData(DefaultTableModel dtm, int no, String title, String author) {
-        dtm.addRow(new Object[]{no, title, author, insetDate()});
+        dtm.addRow(new Object[]{no, title, author, insertDate()});
     }
 
 
@@ -35,7 +33,7 @@ public class TableDataFunction {
             if (dtm.getValueAt(row, 0).equals(no)) {
                 dtm.setValueAt(title, row, 1);
                 dtm.setValueAt(name, row, 2);
-                dtm.setValueAt(insetDate(), row, 3);
+                dtm.setValueAt(insertDate(), row, 3);
             }
         }
     }
@@ -56,5 +54,17 @@ public class TableDataFunction {
             }
         }
         return bool;
+    }
+
+
+    // simpleDateFormat은 1개의 객체만 생성됨
+    public static void main(String[] args) {
+        TableDataFunction tdf = new TableDataFunction();
+        TableDataFunction tdf2 = new TableDataFunction();
+        TableDataFunction tdf3 = new TableDataFunction();
+
+        System.out.println(tdf.simpleDateFormat);
+        System.out.println(tdf2.simpleDateFormat);
+        System.out.println(tdf3.simpleDateFormat);
     }
 }

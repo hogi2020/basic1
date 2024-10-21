@@ -1,4 +1,4 @@
-package classes.ui.step1;
+package classes.step1;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

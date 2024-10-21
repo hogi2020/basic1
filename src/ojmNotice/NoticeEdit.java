@@ -13,8 +13,14 @@ public class NoticeEdit extends JFrame implements ActionListener {
     // NoticeMain 인스턴스를 받는 생성자
     public NoticeEdit() {}
     public NoticeEdit(NoticeMain main) {
-        this.main = main;
-        inDisplay();
+
+        // param에 null이 들어올 수도 있음.
+        if (main == null) {
+            System.out.println("param의 주소번지가 null 입니다.");
+        } else {
+            this.main = main;
+            inDisplay();
+        }
     }
 
 

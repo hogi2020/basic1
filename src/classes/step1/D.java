@@ -1,4 +1,4 @@
-package classes.ui.step1;
+package classes.step1;
 
 // interface는 추상적인 메소드들의 집합을 정의하는 일종의 설계도 역할을 합니다.
 // 인터페이스는 클래스가 어떤 기능을 수행해야 하는지 구격을 정하는 것이며,
