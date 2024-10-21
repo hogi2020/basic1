@@ -4,16 +4,25 @@ import javax.swing.table.DefaultTableModel;
 import java.text.SimpleDateFormat;
 
 public class TableDataFunction {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    // 날짜 입력 메소드
+    // 싱글톤 인스턴스를 저장할 private 필드
+    private SimpleDateFormat simpleDateFormat;
+
+    // 싱글톤 인스턴스를 반환하는 메소드
+    private SimpleDateFormat getDateFormat() {
+        if (simpleDateFormat == null) {
+            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        }
+        System.out.println(simpleDateFormat);
+        return simpleDateFormat;
+    }
+
+
+    // 현재 일시 반환 메소드
     private String insertDate() {
         // long 타입으로 현재 시간 반환
         // System.currentTimeMillis() 시스템 시간에 기반한 밀리초 단위의 시간값을 반환
-        return simpleDateFormat.format(System.currentTimeMillis());
-
-        // 생성된 객체를 초기화하고, 가비지 컬렉션을 요청하여 객체 삭제
-        // simpleDateFormat = null;
+        return getDateFormat().format(System.currentTimeMillis());
     }
 
 
@@ -54,17 +63,5 @@ public class TableDataFunction {
             }
         }
         return bool;
-    }
-
-
-    // simpleDateFormat은 1개의 객체만 생성됨
-    public static void main(String[] args) {
-        TableDataFunction tdf = new TableDataFunction();
-        TableDataFunction tdf2 = new TableDataFunction();
-        TableDataFunction tdf3 = new TableDataFunction();
-
-        System.out.println(tdf.simpleDateFormat);
-        System.out.println(tdf2.simpleDateFormat);
-        System.out.println(tdf3.simpleDateFormat);
     }
 }
