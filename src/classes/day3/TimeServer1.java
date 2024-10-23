@@ -50,8 +50,8 @@ public class TimeServer1 extends Thread {
                 socket.close();
             } catch(IOException e) {}
         }
-    }
-    // run() 종료
+    } // run() 종료
+
 
     // getTimeStr() 시작
     private String getTimeStr() {
@@ -63,12 +63,12 @@ public class TimeServer1 extends Thread {
         return (hour < 10 ? "0" + hour : "" + hour) + ":" +
                 (min < 10 ? "0" + min : "" + min)  +	":" +
                 (sec < 10 ? "0" + sec : "" + sec) ;
-    }
-    // getTimeStr() 종료
+    } // getTimeStr() 종료
+
 
     // main() 시작
     public static void main(String args[]) {
-        int port = 2008;                // 클라이언트가 접속할 포트번호 결정함.
+        int port = 2008;                // 클라이언트가 접속할 서버의 IP주소를 반영해야함.
         ServerSocket server = null;     // 동시에 여러 사용자를 받는 소켓임 | 서버 소켓은 듣고 말하기에 관여하지 않습니다.
         Socket client = null;           // 듣고 말하기에 관여하는 소켓
         // 이 소켓이 있어야 InputStream과 OutputStream을 생성할 수 있습니다.

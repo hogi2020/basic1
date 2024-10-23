@@ -31,12 +31,14 @@ public class TimeClient1 extends Thread {
         String timeStr = null;
 
         try {
+            // 클라이언트 측 host에는 클라이언트 IP주소를 host에 반영하고, port는 서버측 IP를 반영해야함.
             socket = new Socket("localhost", 2008);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             while(true) {
                 System.out.println("while(true)");
+                // readLine()은 서버가 더이상 데이터를 보내지 않으면 null을 반환합니다.
                 while((timeStr = in.readLine()) != null) {
                     System.out.println(timeStr);
                     timelabel.setText(timeStr);  // setText 업데이트 진행
@@ -46,6 +48,7 @@ public class TimeClient1 extends Thread {
                 } catch(InterruptedException i) {}
             }
 
+            // 소켓 연결이 실패하거나, 서버와의 통신에서 문제가 발생하면 IOException 예외가 발생합니다.
         } catch(IOException i) {
             timelabel.setText("타임서버에 접속할 수 없습니다.");
         } finally {
