@@ -111,8 +111,7 @@ public class TimeServer1 extends Thread {
                 } catch(IOException i) {}
             }
         }
-    }
-    // main() 종료
+    } // main() 종료
 }
 
 /*
