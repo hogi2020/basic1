@@ -1,4 +1,4 @@
-package ojmServer;
+package charServer;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -42,10 +42,10 @@ public class OjmClient extends JFrame implements Runnable, ActionListener {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             System.out.println("Start to ready Program...");
-
+            
             // 메세지 수신 스레드
             new Thread(this).start();
-
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,6 +64,7 @@ public class OjmClient extends JFrame implements Runnable, ActionListener {
                 out.println(msg);               // 서버로 메세지 전송
                 txt_field.setText("");          // 텍스트필드 초기화
                 txt_field.setFocusable(true);   // 텍스트필드에 포커스
+
             }
         }
     }
