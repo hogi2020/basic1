@@ -1,7 +1,5 @@
 package Notice;
 
-import day4.variable.N;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
