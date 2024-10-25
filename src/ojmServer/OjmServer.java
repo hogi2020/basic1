@@ -59,14 +59,13 @@ public class OjmServer implements Runnable {
             }
 
             // 메세지 수신
-            while((msg = in.readLine()) != null) {
+            while((msg = (String) in.readObject()) != null) {
                 System.out.println("메세지 정상 출력 | " + msg);
-
                 /// 브로드캐드 메소드를 통해서 모든 클라이언트에게 메세지 전송
                 broadcast(msg);
             }
         }
-        catch (IOException e) {
+        catch (IOException | ClassNotFoundException e) {
             // 예외처리 및 Server Close
             e.printStackTrace();
         }

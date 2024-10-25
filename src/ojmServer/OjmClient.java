@@ -36,6 +36,8 @@ public class OjmClient extends JFrame implements Runnable, ActionListener {
         // 클라이언트-서버 소켓 연결
         try {
             clientSocket = new Socket("localhost", 3000);
+
+            // 클라이언트 측에서 ObjectOutputStream을 먼저 생성
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
             //out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -61,7 +63,8 @@ public class OjmClient extends JFrame implements Runnable, ActionListener {
             // 동작 시, 텍스트 필드가 공란이 아니면 메세지 전송
             if (!msg.isEmpty()) {
                 try {
-                    out.writeObject(msg);               // 서버로 메세지 전송
+                    out.writeObject(msg);       // 서버로 메세지 전송
+                    out.flush();                // 메세지 전송 후, flush
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -77,8 +80,7 @@ public class OjmClient extends JFrame implements Runnable, ActionListener {
         // 메세지 수신
         try {
             msg = null;
-            while (true) {
-                msg = (String) in.readObject();
+            while ((msg = (String) in.readObject()) != null) {  // 서버에서 수신된 객체를 문자열로 전환
                 System.out.println("수신메세지 | " + msg);
                 txt_area.append(" " + msg + "\n");
             }

@@ -4,7 +4,7 @@
 //import java.sql.DriverManager;
 //import java.sql.ResultSet;
 //import java.sql.Statement;
-
+//
 //public class OracleConnection {
 //    // _DRIVER는 패키지 경로를 의미합니다.
 //    // 드라이버 클래스는 제조사에서 제공된 클래스 입니다.
@@ -52,13 +52,13 @@
 //        new OracleConnection();
 //    }
 //}
-
-
-/*
-Java API를 활용하여, 오라클 서버에 접속하는 코드를 작성해봅시다. (Test)
-1. 오라클 회사가 제공하는 드라이버 클래스(ojdbc6.jar)를 로딩합니다.
-2.
-
-드라이버 위치
-D:\workSpaceJava\basic1\src\jdbc\lib\ojdbc6\oracle\jdbc\driver [OracleDriver.class]
- */
+//
+//
+///*
+//Java API를 활용하여, 오라클 서버에 접속하는 코드를 작성해봅시다. (Test)
+//1. 오라클 회사가 제공하는 드라이버 클래스(ojdbc6.jar)를 로딩합니다.
+//2.
+//
+//드라이버 위치
+//D:\workSpaceJava\basic1\src\jdbc\lib\ojdbc6\oracle\jdbc\driver [OracleDriver.class]
+// */
