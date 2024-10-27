@@ -64,12 +64,9 @@ public class OjmServer implements Runnable {
                 /// 브로드캐드 메소드를 통해서 모든 클라이언트에게 메세지 전송
                 broadcast(msg);
             }
-        }
-        catch (IOException e) {
-            // 예외처리 및 Server Close
-            e.printStackTrace();
-        }
-        finally {
+        } catch (IOException e) {
+            System.err.println("클라이언트 연결 중 오류 발생: " + e.getMessage());
+        } finally {
             // 자원 해제 | 자원 누수 방지를 위해 클라이언트 연결이 종료되면 자원 해제
             try {
                 if (in != null) in.close();
