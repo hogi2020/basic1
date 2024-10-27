@@ -3,16 +3,13 @@ package ojmServer;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class OjmClient extends JFrame implements Runnable, ActionListener {
     Socket clientSocket = null;
-    PrintWriter out = null;
-    BufferedReader in = null;
+    ObjectOutputStream out = null;
+    ObjectInputStream in = null;
     String msg = null;
 
     // Display 레이아웃 구성
@@ -39,8 +36,12 @@ public class OjmClient extends JFrame implements Runnable, ActionListener {
         // 클라이언트-서버 소켓 연결
         try {
             clientSocket = new Socket("localhost", 3000);
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+            // 클라이언트 측에서 ObjectOutputStream을 먼저 생성
+            out = new ObjectOutputStream(clientSocket.getOutputStream());
+            in = new ObjectInputStream(clientSocket.getInputStream());
+            //out = new PrintWriter(clientSocket.getOutputStream(), true);
+            //in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             System.out.println("Start to ready Program...");
 
             // 메세지 수신 스레드
@@ -61,23 +62,29 @@ public class OjmClient extends JFrame implements Runnable, ActionListener {
 
             // 동작 시, 텍스트 필드가 공란이 아니면 메세지 전송
             if (!msg.isEmpty()) {
-                out.println(msg);               // 서버로 메세지 전송
+                try {
+                    out.writeObject(msg);       // 서버로 메세지 전송
+                    out.flush();                // 메세지 전송 후, flush
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 txt_field.setText("");          // 텍스트필드 초기화
                 txt_field.setFocusable(true);   // 텍스트필드에 포커스
             }
         }
     }
 
+
     @Override
     public void run() {
         // 메세지 수신
         try {
             msg = null;
-            while ((msg = in.readLine()) != null) {
+            while ((msg = (String) in.readObject()) != null) {  // 서버에서 수신된 객체를 문자열로 전환
                 System.out.println("수신메세지 | " + msg);
                 txt_area.append(" " + msg + "\n");
             }
-        } catch (IOException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
     }

@@ -1,9 +1,6 @@
 package ojmServer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -12,17 +9,17 @@ import java.util.List;
 public class OjmServer implements Runnable {
     // 선언부
     Socket socket = null;
-    PrintWriter out = null;
-    BufferedReader in = null;
+    ObjectOutputStream out = null;
+    ObjectInputStream in = null;
     String msg = null;
 
     /// 선언부 | 클라이언트의 PrintWriter를 저장하는 리스트 생성
-    private List<PrintWriter> clientWriters;
+    private List<ObjectOutputStream> clientWriters;
 
 
     // 생성자 | Socket 멤버변수에 할당
     public OjmServer() {}
-    public OjmServer(Socket socket, List<PrintWriter> clientWriters) {
+    public OjmServer(Socket socket, List<ObjectOutputStream> clientWriters) {
         this.socket = socket;
         this.clientWriters = clientWriters;
     }
@@ -34,8 +31,12 @@ public class OjmServer implements Runnable {
     /// 그래서 List를 사용할 때는 동기화 관련 메서드를 사용하는 것이 좋습니다.
     private void broadcast(String msg) {
         synchronized (clientWriters) {
-            for (PrintWriter out : clientWriters) {
-                out.println(msg);
+            for (ObjectOutputStream out : clientWriters) {
+                try {
+                    out.writeObject(msg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 System.out.println(clientWriters.size());
             }
         }
@@ -48,8 +49,8 @@ public class OjmServer implements Runnable {
 
         try {
             // 입출력 스트림 작성
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
 
             /// 새 클라이언트의 PrintWriter를 리스트에 추가
             synchronized (clientWriters) {
@@ -58,15 +59,23 @@ public class OjmServer implements Runnable {
             }
 
             // 메세지 수신
-            while((msg = in.readLine()) != null) {
+            while((msg = (String) in.readObject()) != null) {
                 System.out.println("메세지 정상 출력 | " + msg);
-
                 /// 브로드캐드 메소드를 통해서 모든 클라이언트에게 메세지 전송
                 broadcast(msg);
             }
+<<<<<<< HEAD
         } catch (IOException e) {
             System.err.println("클라이언트 연결 중 오류 발생: " + e.getMessage());
         } finally {
+=======
+        }
+        catch (IOException | ClassNotFoundException e) {
+            // 예외처리 및 Server Close
+            e.printStackTrace();
+        }
+        finally {
+>>>>>>> origin/master
             // 자원 해제 | 자원 누수 방지를 위해 클라이언트 연결이 종료되면 자원 해제
             try {
                 if (in != null) in.close();
@@ -86,7 +95,7 @@ public class OjmServer implements Runnable {
 
     // 메인 스레드 싱행
     public static void main(String[] args) {
-        List<PrintWriter> clientWriters = new ArrayList<>();
+        List<ObjectOutputStream> clientWriters = new ArrayList<>();
         ServerSocket ss = null;
 
         try {
