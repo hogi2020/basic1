@@ -4,10 +4,51 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OjmServer implements Runnable {
     // 선언부
+    final int PORT = 3000;
+    ConcurrentHashMap<String, OjmChatRoom> chatRooms;
+    ConcurrentHashMap<ObjectOutputStream, String> clientRooms;
+    OjmClientHandler och;
+
+    // 생성자
+    public OjmServer() {
+        chatRooms = new ConcurrentHashMap<>();
+        clientRooms = new ConcurrentHashMap<>();
+    }
+
+    public void start() {
+        // 서버 포트 지정
+        try(ServerSocket ss = new ServerSocket(PORT)) {
+            System.out.println("Ready to Server.....");
+
+            // 클라이언트 소켓 Accept 반복문
+            while (true) {
+                Socket clientSocket = ss.accept();
+                new Thread(new ClientHandler(clientSocket, this)).start();
+            }
+        } catch (IOException e) {
+            System.out.println("서버 지작 중 오류 발생: " + e.getMessage());
+        }
+    }
+
+
+    public ChatRoom geChatRoom(String roomName) {
+        return chatRooms.computeIfAbsent(roomName, k -> new ChatRoom(roomName));
+    
+    }
+
+
+    public void createRoom(String, roomName) {
+        if.chatRooms.containsKey(roomName) {
+            chatRooms.put(roomName, new ChatRoom(roomName));
+        }
+    }
+
     Socket socket = null;
     ObjectOutputStream out = null;
     ObjectInputStream in = null;
@@ -46,46 +87,25 @@ public class OjmServer implements Runnable {
     // 스레드 동작 시, 구현 메소드
     @Override
     public void run() {
+        try (
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+        ) {
+            this.out = out;
+            clientWriters.add(out);
+            System.out.println("클라이언트 접속");
 
-        try {
-            // 입출력 스트림 작성
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
-
-            /// 새 클라이언트의 PrintWriter를 리스트에 추가
-            synchronized (clientWriters) {
-                clientWriters.add(out);
-                System.out.println("클라이언트 접속");
-            }
-
-            // 메세지 수신
             while((msg = (String) in.readObject()) != null) {
                 System.out.println("메세지 정상 출력 | " + msg);
                 /// 브로드캐드 메소드를 통해서 모든 클라이언트에게 메세지 전송
                 broadcast(msg);
             }
-<<<<<<< HEAD
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.err.println("클라이언트 연결 중 오류 발생: " + e.getMessage());
         } finally {
-=======
-        }
-        catch (IOException | ClassNotFoundException e) {
-            // 예외처리 및 Server Close
-            e.printStackTrace();
-        }
-        finally {
->>>>>>> origin/master
-            // 자원 해제 | 자원 누수 방지를 위해 클라이언트 연결이 종료되면 자원 해제
+            clientWriters.remove(out);
             try {
-                if (in != null) in.close();
-                if (out != null) out.close();
                 if (socket != null) socket.close();
-
-                /// 클라이언트 연결이 종료되면 리스트에서 PrintWriter 제거
-                synchronized (clientWriters) {
-                    clientWriters.remove(out);
-                }
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -95,12 +115,9 @@ public class OjmServer implements Runnable {
 
     // 메인 스레드 싱행
     public static void main(String[] args) {
-        List<ObjectOutputStream> clientWriters = new ArrayList<>();
-        ServerSocket ss = null;
+        List<ObjectOutputStream> clientWriters = Collections.synchronizedList(new ArrayList<>());
 
-        try {
-            // Take Server Port
-            ss = new ServerSocket(3000);
+        try (ServerSocket ss = new ServerSocket(3000)) {
             System.out.println("Server started successfully.....");
 
             // Catch for Client Socket
@@ -115,9 +132,7 @@ public class OjmServer implements Runnable {
                 new Thread(os).start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            try {ss.close();}
-            catch (IOException ex) {ex.printStackTrace();}
+            System.err.println("서버 시작 중 오류 발생: " + e.getMessage());
         }
     }
 }

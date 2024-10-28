@@ -1,0 +1,69 @@
+package ojmServer;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class OjmServer {
+    private static final int PORT = 3000;
+    private ConcurrentHashMap<String, ChatRoom> chatRooms;
+    private ConcurrentHashMap<ObjectOutputStream, String> clientRooms;
+
+    public OjmServer() {
+        chatRooms = new ConcurrentHashMap<>();
+        clientRooms = new ConcurrentHashMap<>();
+    }
+
+    public void start() {
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("서버가 포트 " + PORT + "에서 시작되었습니다.");
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                new Thread(new ClientHandler(clientSocket, this)).start();
+            }
+        } catch (IOException e) {
+            System.err.println("서버 시작 중 오류 발생: " + e.getMessage());
+        }
+    }
+
+    public ChatRoom getChatRoom(String roomName) {
+        return chatRooms.computeIfAbsent(roomName, k -> new ChatRoom(roomName));
+    }
+
+    public void createRoom(String roomName) {
+        if (!chatRooms.containsKey(roomName)) {
+            chatRooms.put(roomName, new ChatRoom(roomName));
+            broadcastRoomList();
+        }
+    }
+
+    public void broadcastRoomList() {
+        String roomList = "ROOMLIST:" + String.join(",", chatRooms.keySet());
+        for (ObjectOutputStream client : clientRooms.keySet()) {
+            try {
+                client.writeObject(roomList);
+                client.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void addClientToRoom(ObjectOutputStream client, String roomName) {
+        clientRooms.put(client, roomName);
+    }
+
+    public void removeClientFromRoom(ObjectOutputStream client) {
+        clientRooms.remove(client);
+    }
+
+    public String getClientRoom(ObjectOutputStream client) {
+        return clientRooms.get(client);
+    }
+
+    public static void main(String[] args) {
+        new OjmServer().start();
+    }
+}

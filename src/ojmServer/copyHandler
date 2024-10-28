@@ -1,0 +1,67 @@
+package ojmServer;
+
+import java.io.*;
+import java.net.Socket;
+
+public class ClientHandler implements Runnable {
+    private Socket socket;
+    private OjmServer server;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+
+    public ClientHandler(Socket socket, OjmServer server) {
+        this.socket = socket;
+        this.server = server;
+    }
+
+    @Override
+    public void run() {
+        try {
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+
+            server.addClientToRoom(out, null);
+            server.broadcastRoomList();
+
+            while (true) {
+                String message = (String) in.readObject();
+                String[] parts = message.split("#", 2);
+                if (parts.length == 2) {
+                    String command = parts[0];
+                    String content = parts[1];
+
+                    switch (command) {
+                        case "Create":
+                            server.createRoom(content);
+                            break;
+                        case "Join":
+                            ChatRoom room = server.getChatRoom(content);
+                            room.addClient(out);
+                            server.addClientToRoom(out, content);
+                            out.writeObject("JOINED:" + content);
+                            break;
+                        default:
+                            String currentRoom = server.getClientRoom(out);
+                            if (currentRoom != null) {
+                                server.getChatRoom(currentRoom).broadcast(message, out);
+                            }
+                            break;
+                    }
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("클라이언트 처리 중 오류 발생: " + e.getMessage());
+        } finally {
+            try {
+                String roomName = server.getClientRoom(out);
+                if (roomName != null) {
+                    server.getChatRoom(roomName).removeClient(out);
+                }
+                server.removeClientFromRoom(out);
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
