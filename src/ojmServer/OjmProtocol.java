@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 
 public class OjmProtocol implements Runnable {
@@ -45,7 +46,21 @@ public class OjmProtocol implements Runnable {
         try {
             while((msg = (String) in.readObject()) != null) {
                 System.out.println("수신메세지 | " + msg);
-                oc.displayMsg(msg);
+                String[] strList = msg.split(":", 2);
+
+                // 입력 스트림이 RoomList일 경우, RoomList 업데이트 진행
+                if (strList[0].equals("RoomList")) {
+                    updateRoomList(strList[1].split(","));
+
+                // 그룹창 입장
+                } else if (strList[0].equals("JOINED")) {
+                    oc.displayMsg(msg);
+
+                // 메세지 출력
+                } else {
+                    oc.displayMsg(msg);
+                }
+
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

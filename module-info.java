@@ -1,3 +1,9 @@
-module basic1 {
-    requires java.sql;
+/**
+ * 
+ */
+/**
+ * 
+ */
+module charServer {
+
 }
