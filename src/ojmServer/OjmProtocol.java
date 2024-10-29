@@ -24,13 +24,13 @@ public class OjmProtocol implements Runnable {
     }
 
 
-    // 서버 연결 메소드
+    // 서버 연결
     public void connectToServer() {
         try {
             clientSocket = new Socket("localhost", 3000);
             in = new ObjectInputStream(clientSocket.getInputStream());
             out = new ObjectOutputStream(clientSocket.getOutputStream());
-            System.out.println("서버에 연결되었습니다....");
+            System.out.println("Connect to Server.....");
 
             new Thread(this).start();
         } catch (IOException e) {
@@ -40,7 +40,7 @@ public class OjmProtocol implements Runnable {
 
 
 
-    // run 메소드 생성
+    // 프로토콜에 따른 입력스트림 처리
     @Override
     public void run() {
         try {
@@ -48,9 +48,9 @@ public class OjmProtocol implements Runnable {
                 System.out.println("수신메세지 | " + msg);
                 String[] strList = msg.split(":", 2);
 
-                // 입력 스트림이 RoomList일 경우, RoomList 업데이트 진행
+                // 입력 스트림을 통한 RoomList 업데이트 진행
                 if (strList[0].equals("RoomList")) {
-                    updateRoomList(strList[1].split(","));
+                    oc.updateRoomList(strList[1].split(","));
 
                 // 그룹창 입장
                 } else if (strList[0].equals("JOINED")) {
@@ -75,7 +75,7 @@ public class OjmProtocol implements Runnable {
 
 
     
-    // 클라이언트-서버 메세지 전송 메서드
+    // 클라이언트-서버 출력스트림 메서드
     public void sendMsg(String msg) {
         try {
             out.writeObject(msg);
@@ -84,11 +84,6 @@ public class OjmProtocol implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    // 채팅창 목록 업데이트
-    public void updateRoomList(String[] rooms) {
-        oc.updateRoomList(rooms);
     }
 }
 

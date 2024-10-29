@@ -96,12 +96,12 @@ public class OjmClient extends JFrame implements ActionListener {
     }
 
 
-    // 프로토콜에서 들어오는 메세지를 창에 보여주는 메서드
+    // 메세지를 창에 업데이트
     public void displayMsg(String inMsg) {
         txt_area.append(" " + inMsg + "\n");
     }
 
-    // 그룹 목록 UI 업데이트 메서드
+    // 그룹 목록 List 업데이트
     public void updateRoomList(String[] rooms) {
         listModel_room.clear();
         for (String room : rooms) {

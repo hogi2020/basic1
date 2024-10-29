@@ -10,15 +10,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class OjmServer {
     // 선언부
-    /// ConcurrentHashMap 여러 스레드가 동시에 접근할 수 있도록 설계
-    /// 여러 스레드가 동시에 데이터를 읽고 쓸 때 발생할 수 있는 문제 예방
     final int PORT = 3000;
-    ConcurrentHashMap<String, OjmChatRoom> chatRooms;
-    ConcurrentHashMap<ObjectOutputStream, String> clientRooms;
+    ConcurrentHashMap<String, OjmChatRoom> chatRooms;           // 그룹창 Map
+    ConcurrentHashMap<ObjectOutputStream, String> clientRooms;  // 클라이언트 Map
 
 
     // 생성자
     public OjmServer() {
+
         chatRooms = new ConcurrentHashMap<>();
         clientRooms = new ConcurrentHashMap<>();
     }
@@ -31,8 +30,9 @@ public class OjmServer {
 
             // 클라이언트 소켓 Accept() 반복문
             while (true) {
+                // 클라이언트가 들어올때까지 accept()에서 계속 블로킹!
                 Socket clientSocket = ss.accept();
-                System.out.println("클라이언트 접속 | " + clientSocket.getInetAddress());
+                System.out.println("Access Client | " + clientSocket.getInetAddress());
                 new Thread(new OjmClientHandler(clientSocket, this)).start();
             }
         } catch (IOException e) {

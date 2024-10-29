@@ -8,9 +8,9 @@ import java.net.Socket;
 public class OjmClientHandler implements Runnable {
     // 선언부
     Socket socket;
-    OjmServer os;
     ObjectInputStream in;
-    ObjectOutputStream  out;
+    ObjectOutputStream out;
+    OjmServer os;
 
     // 생성자
     public OjmClientHandler(Socket socket, OjmServer os) {
@@ -69,5 +69,4 @@ public class OjmClientHandler implements Runnable {
             os.removeClientFromRoom(out);
         }
     }
-    
 }
