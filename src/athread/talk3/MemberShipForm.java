@@ -28,6 +28,9 @@ public class MemberShipForm extends JFrame implements ActionListener {
     JPanel jp_south = new JPanel();
     JButton jbtn_ins = new JButton("등록");
     JButton jbtn_close = new JButton("닫기");
+
+    ZipCodeSearchForm zcs = new ZipCodeSearchForm(this);
+
     MemberShipForm(){
         initDisplay();
     }
@@ -83,6 +86,10 @@ public class MemberShipForm extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Object obj = e.getSource();
+        if(obj == jbtn_zipcode) {
+            zcs.initDisplay();
+        }
 
     }
 }

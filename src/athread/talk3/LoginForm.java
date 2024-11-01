@@ -1,4 +1,4 @@
-package talk3;
+package athread.talk3;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +17,9 @@ public class LoginForm extends JFrame implements ActionListener {
 	JPasswordField jpf_pw = new JPasswordField("123");
 	JButton btn_login = new JButton(new ImageIcon(imgPath+"login.png"));
 	JButton btn_join = new JButton(new ImageIcon(imgPath+"confirm.png"));
+	TalkDao tDao = new TalkDao();
+	String nickName = null;
+
 	//생성자
 	public LoginForm() {
 		System.out.println("LoginForm 디폴트 생성자");
@@ -78,8 +81,40 @@ public class LoginForm extends JFrame implements ActionListener {
 		Object obj = e.getSource();
 		//로그인
 		if (obj == btn_login) {
-			JOptionPane.showMessageDialog(this,"로그인요청","INFO",JOptionPane.INFORMATION_MESSAGE);
-			return;
+
+			if ("".equals(jtf_id.getText()) || "".equals(jpf_pw.getText())) {
+				JOptionPane.showMessageDialog(this,"로그인요청","INFO",JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+
+			try {
+				String mem_id = jtf_id.getText();
+				String mem_pw = jpf_pw.getText();
+
+				String mem_nick = tDao.login(mem_id, mem_pw);
+
+				if("비밀번호가 맞지 않습니다.".equals(mem_nick)) {
+					JOptionPane.showMessageDialog(this, "비밀번호가 맞지 않습니다.");
+					jpf_pw.setText("");
+				} else if("아이디가 맞지 않습니다.".equals(mem_nick)) {
+					JOptionPane.showMessageDialog(this, "아이디가 존재하지 않습니다.");
+					jtf_id.setText("");
+				} else {
+					nickName = mem_nick;
+					this.setVisible(false);
+					jtf_id.setText("");
+					jpf_pw.setText("");
+
+					// 로그인 성공 시, 파라미터로 로그인폼 주소번지를 넘겨서
+					// @TO_
+					// DO 멤버변수들을 사용할 수 있도록 조치한다. - this 추가한 생성자 추가할 것.....
+					TalkClient tc = new TalkClient(this);
+				}
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
 		}
 		//회원가입
 		else if (obj == btn_join) {

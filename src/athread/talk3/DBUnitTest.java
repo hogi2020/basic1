@@ -1,7 +1,7 @@
-package talk3;
+package athread.talk3;
 
-import quiz.step1.DeptDTO;
-import sqlConnect.DBConnectionMgr;
+import com.util.DBConnectionMgr;
+import jdbc.step1.DeptDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,13 +33,13 @@ public class DBUnitTest {
             DeptDTO dto = null;
             while(rs.next()){//4바퀴 반복한다.
                 //생성자 파라미터 자리로 초기화를 처리하는 것.- 권장
-                //dto = new DeptDTO(rs.getInt("deptno"), rs.getString("dname"), rs.getString("loc"));
+                dto = new DeptDTO(rs.getInt("deptno"), rs.getString("dname"), rs.getString("loc"));
                 //dto = new DeptDTO(rs.getInt(1), rs.getString(2), rs.getString(3));
                 list.add(dto);
             }
             System.out.println(list.size());
             for(DeptDTO ddto:list){
-                //System.out.println(ddto.getDeptno());//4개의 주소번지 출력
+                System.out.println(ddto.getDeptno());//4개의 주소번지 출력
             }
         } catch (Exception e) {
         }
