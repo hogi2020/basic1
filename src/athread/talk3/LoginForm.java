@@ -25,6 +25,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		System.out.println("LoginForm 디폴트 생성자");
 		initDisplay();
 	}
+
 	//JPanel은 다양한 컴포넌트(독립적인 역할을 하는 클래스:버튼,라디오버튼,...)를 담을 수 있다.
 	class Mypanel extends JPanel {
 		//컴포넌트가 그려질 때 호출되는 메소드. 패널에 맞춤형 그래픽 그릴 수 있음
@@ -36,6 +37,7 @@ public class LoginForm extends JFrame implements ActionListener {
 			super.paintComponent(g);//이미지처리는 개발자가 호출만 할 수 있고 내부적으로 처리됨
 		}
 	}
+
 	//화면처리부
 	public void initDisplay(){
 		System.out.println("initDisplay 호출");
@@ -68,14 +70,15 @@ public class LoginForm extends JFrame implements ActionListener {
 		this.setSize(350,600);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
-
 	}
+
 	//메인메소드
 	public static void main(String[] args) {
 		//오늘은 메인메소드 내에서 initDisplay를 호출하지 않고
 		//생성자 안에서 호출합니다. 따라서 인스턴스 변수가 필요없다.
 		new classes.ui.LoginForm();
 	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
@@ -86,7 +89,6 @@ public class LoginForm extends JFrame implements ActionListener {
 				JOptionPane.showMessageDialog(this,"로그인요청","INFO",JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-
 			try {
 				String mem_id = jtf_id.getText();
 				String mem_pw = jpf_pw.getText();
@@ -110,12 +112,11 @@ public class LoginForm extends JFrame implements ActionListener {
 					// DO 멤버변수들을 사용할 수 있도록 조치한다. - this 추가한 생성자 추가할 것.....
 					TalkClient tc = new TalkClient(this);
 				}
-
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-
 		}
+
 		//회원가입
 		else if (obj == btn_join) {
 			JOptionPane.showMessageDialog(this,"회원가입요청","ERROR",JOptionPane.ERROR_MESSAGE);
