@@ -110,7 +110,7 @@ public class LoginForm extends JFrame implements ActionListener {
 					// 로그인 성공 시, 파라미터로 로그인폼 주소번지를 넘겨서
 					// @TO_
 					// DO 멤버변수들을 사용할 수 있도록 조치한다. - this 추가한 생성자 추가할 것.....
-					TalkClient tc = new TalkClient(this);
+					TalkClient tc = new TalkClient();
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

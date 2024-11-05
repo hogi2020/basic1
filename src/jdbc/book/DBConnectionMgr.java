@@ -1,9 +1,10 @@
-package com.util;
+package jdbc.book;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 //공통코드 작성해 보기 - 공통팀(브레인), 품질관리팀(QC), 형상관리팀(git버전관리, 개발 가이드 문서, 개발환경설정)
 //반복되는 코드 줄이기
 //메소드는 슬림(양이 적게)하게 하나의 책임만 진다. - 재사용성이 좋다.
@@ -12,7 +13,7 @@ import java.sql.ResultSet;
 //클래스선언에 static붙임 - 얕은복사 - 원본이 하나다
 //이것이 가능한가? - 스레드(싱글스레드, 멀티스레드)
 public class DBConnectionMgr {
-    public static DBConnectionMgr dbMgr = null;
+    static DBConnectionMgr dbMgr = null;
     //서버(정보제공측) - 클라이언트(제공된 정보를 활용) - 2-tier
     //서버 -  미들웨어서버 - 클라이언트 - 3-tier, multi-tier
     //java.sql.* 혹은 javax.sql.*(multi tier) 참조함.
@@ -52,16 +53,16 @@ public class DBConnectionMgr {
     //select - > Connection, PreparedStatement, ResultSet
     public void freeConnection(Connection con, PreparedStatement pstmt, ResultSet rs){
         try {
-          if(rs != null){ rs.close(); }
-          if(pstmt != null){ pstmt.close(); }
-          if(con != null){ con.close(); }
+            if(rs != null){ rs.close(); }
+            if(pstmt != null){ pstmt.close(); }
+            if(con != null){ con.close(); }
         } catch (Exception e) {
         }
     }
     public void freeConnection(Connection con, PreparedStatement pstmt){
         try {
-          if(pstmt != null){ pstmt.close(); }
-          if(con != null){ con.close(); }
+            if(pstmt != null){ pstmt.close(); }
+            if(con != null){ con.close(); }
         } catch (Exception e) {
         }
     }
