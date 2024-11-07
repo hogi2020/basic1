@@ -36,7 +36,7 @@ public class BookDaoTest {
             bdt.getBookListTest();
         }else{
             JOptionPane.showMessageDialog(bdt.frame,"삭제 실패 하였습니다.");
-            //return;
+            //return; if문에서 return을 만나면 호출된 메소드를 탈출함.
         }
         result = -1;
         BookVO pbvo = new BookVO(0,"책제목5","강감찬","원출판","책소개5","5.png");

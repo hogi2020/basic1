@@ -1,8 +1,13 @@
 package jdbc.book;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Vector;
+
 /*
 BookDialog에서 수정이나 입력일 때 insert가 1이거나 또는 update도 1이면 성공
 이 때 BookApp의 도서 목록 페이지를 새로고침 한다. - 요구사항이 있다면....
@@ -11,6 +16,7 @@ BookApp 의 메소드를 BookDialog에서 호출해야 한다.
  */
 public class BookApp extends JFrame implements ActionListener {
     BookDialog bd = new BookDialog(this);
+    BookDao bDao = new BookDao();
     JMenuBar mb = new JMenuBar();
     JMenu jm_file = new JMenu("File");
     JMenuItem jmi_dbcon = new JMenuItem("DB연결");
@@ -24,36 +30,119 @@ public class BookApp extends JFrame implements ActionListener {
     JMenuItem jmi_del = new JMenuItem("삭제");
     String imgPath = "src\\image\\book\\";
     JToolBar jtBar = new JToolBar();
+    JPanel jp_center = new JPanel();
+    JPanel jp_center_north = new JPanel();
+    String[] gubuns = {"책제목", "저자", "출판사"};
+    JComboBox jcd_zdo = new JComboBox(gubuns);
+    JTextField jtf_keyword = new JTextField(20);
+    JButton jbtn_search = new JButton("검색");
+
     JButton btn_all = new JButton("전체조회");
     JButton btn_ins = new JButton("입력", new ImageIcon(imgPath + "new.gif"));
     JButton btn_det = new JButton("상세보기", new ImageIcon(imgPath + "detail.gif"));
     JButton btn_upd = new JButton("수정", new ImageIcon(imgPath + "update.gif"));
     JButton btn_del = new JButton("삭제", new ImageIcon(imgPath + "delete.gif"));
+    String[] cols = {"도서번호","도서명", "저자","출판사"};
+    String[][] data = new String[0][4];
+    DefaultTableModel dtm_book = new DefaultTableModel(data, cols);
+    JTable jtb_book = new JTable(dtm_book);
+    JScrollPane jsp_book = new JScrollPane(jtb_book,
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     public BookApp() {
         initDisplay();
     }
     public void refreshData(){
         System.out.println("새로고침 호출");
+        List<BookVO> bList = bDao.getBookList(new BookVO());
+        //UI 초기화 작업이다. - 초기화
+        //전체조회를 누르면 버튼이 비활성화 되지 않아서 계속 반복적으로 누를 수 있다.
+        //그래서 기존에 출력된 정보를 가지고 뒤에 추가되고 있다.
+        while (dtm_book.getRowCount() > 0) {
+            //0번째를 계속해서 삭제하게 되는데 첫번째가 삭제되고 나면
+            // dtm_book의 index값이 1씩 줄어들게 된다.
+            dtm_book.removeRow(0);
+        }
+        for(int i=0;i<bList.size();i++){
+            BookVO bvo = bList.get(i);//0,1,2,3,4,5이면 탈출함
+            Vector<Object> v = new Vector<>();
+            v.add(bvo.getB_no());
+            v.add(bvo.getB_name());
+            v.add(bvo.getB_author());
+            v.add(bvo.getB_publish());
+            dtm_book.addRow(v);
+        }
     }
     //입력일 때 호출 - 입력 버튼 | 입력 메뉴 아이템
     public void insertActionPerformed(){
         System.out.println("입력 버튼 | 입력 메뉴 아이템");
-        bd.set("입력", true);
+        bd.set("입력", true, null, true);
     }
     //상세보기일 때  호출 - 상세보기버튼 | 상세보기 메뉴 아이템
     public void detailActionPerformed(){
         System.out.println("상세보기버튼 | 상세보기 메뉴 아이템");
-    }
+        int one = -1;
+        one = jtb_book.getSelectedRow();
+        int b_no = 0;
+        b_no = Integer.parseInt(dtm_book.getValueAt(one, 0).toString());
+        if(one < 0) {
+            JOptionPane.showMessageDialog(this, "상세조회할 로우를 선택하세요."
+                    , "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        BookVO pbvo = new BookVO();
+        //b_no = 0인 상태
+        pbvo.setB_no(b_no);//0이었지만 여기서 값이 바뀜. 0보다 큰 값으로 변함
+        List<BookVO> bList = bDao.getBookList(pbvo);//pk 있어서 한 건만 조회
+        //bList.size()=1
+        if(bList.size() == 1){
+            BookVO bvo = bList.get(0);//사용자가 선택한 로우의 값을 담았다. 난 null아니야
+            bd.set("상세보기",true, bvo, false);
+        }else{
+            JOptionPane.showMessageDialog(this, "조회결과가 없습니다."
+                    , "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+    }// end of detailActionPerformed
     //수정일때 호출 - 수정버튼 | 수정 메뉴 아이템 일때
     public void updateActionPerformed(){
         System.out.println("수정버튼 | 수정 메뉴 아이템 일때");
+        bd.set("수정",true, null, true);
     }
     //삭제 일때 호출 - 삭제버튼 | 삭제 메뉴 아이템 일때
     public void deleteActionPerformed(){
         System.out.println("삭제버튼 | 삭제 메뉴 아이템 일때");
+        //당신이 선택한 로우는 얼마인가요?
+        int index[] = jtb_book.getSelectedRows();
+        int one = jtb_book.getSelectedRow();
+        if(index.length == 0){
+            JOptionPane.showMessageDialog(this, "삭제할 로우를 선택하세요."
+                    , "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }else{
+            //삭제할 로우를 선택했다면 여기로.......
+            //DELETE FROM book152 WHERE b_no = 5;
+            //파라미터가 필요하다. b_no가 필요하다.
+            int b_no = 0;
+            b_no = Integer.parseInt(dtm_book.getValueAt(one, 0).toString());
+            //System.out.println("당신이 선택한 로우의 도서 번호 : "+b_no);
+            int result = bDao.bookDelete(b_no);
+            if(result == 1){//삭제가 성공하면 1을 반환받고 실패하면 0을 반환받음.
+                refreshData();
+            }
+        }
     }
 
     public void initDisplay(){
+
+        // 북쪽에는 jp_center_north 속지, 중앙에는 jsp_book 붙임
+        jp_center.setLayout(new BorderLayout());
+        jp_center_north.setLayout(new BorderLayout());
+        jp_center_north.add("Center", jtf_keyword);
+        jp_center_north.add("East", jbtn_search);
+        jp_center_north.add("West", jcd_zdo);
+        jp_center.add("North", jp_center_north);
+        jp_center.add("Center", jsp_book);
 
         btn_ins.addActionListener(this);
         jmi_ins.addActionListener(this);
@@ -83,6 +172,7 @@ public class BookApp extends JFrame implements ActionListener {
         jtBar.add(btn_upd);
         jtBar.add(btn_del);
         this.add("North", jtBar);
+        this.add("Center", jp_center);
         this.setSize(700, 500);
         this.setVisible(true);
     }
@@ -106,16 +196,17 @@ public class BookApp extends JFrame implements ActionListener {
         if(obj == btn_all || obj == jmi_all){
             refreshData();
         }
-        if(obj == btn_ins || obj == jmi_ins){
+        else if(obj == btn_ins || obj == jmi_ins){
             insertActionPerformed();
         }
-        if(obj == btn_upd || obj == jmi_upd){
+        else if(obj == btn_upd || obj == jmi_upd){
             updateActionPerformed();
         }
-        if(obj == btn_del || obj == jmi_del){
+        else if(obj == btn_del || obj == jmi_del){
             deleteActionPerformed();
         }
-        if(obj == btn_det || obj == jmi_det){
+        //상세보기 버튼 이나 상세보기 메뉴 아이템을 눌렀을 때
+        else if(obj == btn_det || obj == jmi_det){
             detailActionPerformed();
         }
     }

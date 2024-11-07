@@ -2,20 +2,19 @@ package jdbc.book;
 //MVC패턴 - 데이터관련된 것은 Model계층입니다. - CRUD작업입니다.
 //SELECT, INSERT , UPDATE, DELETE
 import com.util.DBConnectionMgr;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 public class BookDao {
     //Spring프레임워크가 기본적으로 객체 라이프사이클 관리하는 메커니즘
     DBConnectionMgr dbMgr = DBConnectionMgr.getInstance();//싱글톤 패턴
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
-
     /*****************************************************************
      * 도서 목록 조회 및 상세조회 구현
      *  SELECT b_no, b_name, b_author, b_publish, b_info, b_img
@@ -28,7 +27,6 @@ public class BookDao {
      * 한 건이면 bList.size() =1이면 한 건이다.
      * bList.size() > 1이면 여러 건이다.
      *****************************************************************/
-
     public List<BookVO> getBookList(BookVO pbvo){
         //System.out.println("getBookList호출 성공 : " +pbvo.getB_no());
         List<BookVO> bList = new ArrayList<>();
@@ -38,6 +36,8 @@ public class BookDao {
         sql.append(" from book152");
         if(pbvo.getB_no() > 0){
             sql.append(" where b_no = ?");
+        }else{
+            sql.append(" order by b_no desc");
         }
         try {
             conn = dbMgr.getConnection();

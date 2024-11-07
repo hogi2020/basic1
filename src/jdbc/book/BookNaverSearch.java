@@ -1,0 +1,19 @@
+package jdbc.book;
+
+import javax.swing.*;
+
+public class BookNaverSearch extends JDialog {
+    BookApp ba = null;
+    public BookNaverSearch() {}
+    public BookNaverSearch(BookApp ba) {
+        this.ba = ba;
+        initDisplay();
+    }
+    public void initDisplay(){
+        System.out.println("initDisplay");
+        System.out.println(this.ba);//null
+    }
+    public static void main(String[] args) {
+        new BookNaverSearch(null);
+    }
+}
