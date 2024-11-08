@@ -39,7 +39,8 @@ public class BookDaoTest {
             //return; if문에서 return을 만나면 호출된 메소드를 탈출함.
         }
         result = -1;
-        BookVO pbvo = new BookVO(0,"책제목5","강감찬","원출판","책소개5","5.png");
+        //BookVO pbvo = new BookVO(0,"책제목5","강감찬","원출판","책소개5","5.png");
+        BookVO pbvo = new BookVO(0,"책제목5","강감찬","원출판","책소개5","5.png","전체","");
         result = bdt.bookDao.bookInsert(pbvo);
         if(result == 1){
             JOptionPane.showMessageDialog(bdt.frame,"입력 성공하였습니다.");

@@ -5,6 +5,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.Vector;
 
@@ -14,8 +16,9 @@ BookDialog에서 수정이나 입력일 때 insert가 1이거나 또는 update�
 BookApp 의 메소드를 BookDialog에서 호출해야 한다.
 이 때 부모창의 주소원본을 가져한다.
  */
-public class BookApp extends JFrame implements ActionListener {
+public class BookApp extends JFrame implements ActionListener, ItemListener {
     BookDialog bd = new BookDialog(this);
+    BookNaverSearch bns = new BookNaverSearch(this);
     BookDao bDao = new BookDao();
     JMenuBar mb = new JMenuBar();
     JMenu jm_file = new JMenu("File");
@@ -32,16 +35,17 @@ public class BookApp extends JFrame implements ActionListener {
     JToolBar jtBar = new JToolBar();
     JPanel jp_center = new JPanel();
     JPanel jp_center_north = new JPanel();
-    String[] gubuns = {"책제목", "저자", "출판사"};
-    JComboBox jcd_zdo = new JComboBox(gubuns);
+    String[] gubuns = {"전체","책제목","저자","출판사"};
+    String[] cgubuns = {"all","b_name","b_author","b_publish"};
+    JComboBox jcb_gubuns = new JComboBox(gubuns);//West
     JTextField jtf_keyword = new JTextField(20);
     JButton jbtn_search = new JButton("검색");
-
     JButton btn_all = new JButton("전체조회");
     JButton btn_ins = new JButton("입력", new ImageIcon(imgPath + "new.gif"));
     JButton btn_det = new JButton("상세보기", new ImageIcon(imgPath + "detail.gif"));
     JButton btn_upd = new JButton("수정", new ImageIcon(imgPath + "update.gif"));
     JButton btn_del = new JButton("삭제", new ImageIcon(imgPath + "delete.gif"));
+    JButton btn_naver = new JButton("네이버도서검색");
     String[] cols = {"도서번호","도서명", "저자","출판사"};
     String[][] data = new String[0][4];
     DefaultTableModel dtm_book = new DefaultTableModel(data, cols);
@@ -49,12 +53,13 @@ public class BookApp extends JFrame implements ActionListener {
     JScrollPane jsp_book = new JScrollPane(jtb_book,
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    String gubun = null;//b_name, b_author, b_publish
     public BookApp() {
         initDisplay();
     }
-    public void refreshData(){
-        System.out.println("새로고침 호출");
-        List<BookVO> bList = bDao.getBookList(new BookVO());
+    public void refreshData(BookVO pbvo){
+        System.out.println("새로고침 호출"+pbvo.getKeyword()+", "+pbvo.getGubun());
+        List<BookVO> bList = bDao.getBookList(pbvo);
         //UI 초기화 작업이다. - 초기화
         //전체조회를 누르면 버튼이 비활성화 되지 않아서 계속 반복적으로 누를 수 있다.
         //그래서 기존에 출력된 정보를 가지고 뒤에 추가되고 있다.
@@ -128,22 +133,28 @@ public class BookApp extends JFrame implements ActionListener {
             //System.out.println("당신이 선택한 로우의 도서 번호 : "+b_no);
             int result = bDao.bookDelete(b_no);
             if(result == 1){//삭제가 성공하면 1을 반환받고 실패하면 0을 반환받음.
-                refreshData();
+                BookVO pbvo = new BookVO();
+                pbvo.setB_no(0);
+                pbvo.setGubun("전체");
+                pbvo.setKeyword("");
+                refreshData(pbvo);
             }
         }
     }
 
     public void initDisplay(){
-
-        // 북쪽에는 jp_center_north 속지, 중앙에는 jsp_book 붙임
+        //북쪽에는 jp_center_north속지, 중앙에는 jsp_book붙임
         jp_center.setLayout(new BorderLayout());
         jp_center_north.setLayout(new BorderLayout());
+        jp_center_north.add("West", jcb_gubuns);
         jp_center_north.add("Center", jtf_keyword);
         jp_center_north.add("East", jbtn_search);
-        jp_center_north.add("West", jcd_zdo);
         jp_center.add("North", jp_center_north);
         jp_center.add("Center", jsp_book);
-
+        //검색기에 필요한 이벤트 소스와 이벤트 처리 클래스 매핑하기
+        jcb_gubuns.addItemListener(this);
+        jtf_keyword.addActionListener(this);
+        jbtn_search.addActionListener(this);
         btn_ins.addActionListener(this);
         jmi_ins.addActionListener(this);
         btn_det.addActionListener(this);
@@ -154,6 +165,7 @@ public class BookApp extends JFrame implements ActionListener {
         jmi_del.addActionListener(this);
         btn_all.addActionListener(this);
         jmi_all.addActionListener(this);
+        btn_naver.addActionListener(this);
         jm_file.add(jmi_dbcon);
         jm_file.add(se_file);
         jm_file.add(jmi_exit);
@@ -171,6 +183,7 @@ public class BookApp extends JFrame implements ActionListener {
         jtBar.add(btn_det);
         jtBar.add(btn_upd);
         jtBar.add(btn_del);
+        jtBar.add(btn_naver);
         this.add("North", jtBar);
         this.add("Center", jp_center);
         this.setSize(700, 500);
@@ -193,8 +206,22 @@ public class BookApp extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
         //서로 같은 역할을 하는 메뉴아이템과 버튼에 대해서 하나의 메소드로 설계해본다. - 학습목표
-        if(obj == btn_all || obj == jmi_all){
-            refreshData();
+        if(obj == btn_naver){
+            bns.setVisible(true);
+        }
+        else if(obj == jtf_keyword || obj == jbtn_search){
+            BookVO pbvo = new BookVO();
+            pbvo.setGubun(gubun);
+            pbvo.setKeyword(jtf_keyword.getText());
+            jtf_keyword.setText("");
+            refreshData(pbvo);
+        }
+        else if(obj == btn_all || obj == jmi_all){
+            BookVO pbvo = new BookVO();
+            pbvo.setB_no(0);
+            pbvo.setGubun("전체");
+            pbvo.setKeyword("");
+            refreshData(pbvo);
         }
         else if(obj == btn_ins || obj == jmi_ins){
             insertActionPerformed();
@@ -210,6 +237,19 @@ public class BookApp extends JFrame implements ActionListener {
             detailActionPerformed();
         }
     }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        Object obj = e.getSource();
+        if(obj == jcb_gubuns){
+            if(e.getStateChange() == ItemEvent.SELECTED){
+                //gubuns에서 가져오면 책이름, 저자, 출판사로 한글 이름이어서 컬럼명이 아니죠
+                //선택한 컬럼명에 대한 영문 컬럼명이 필요하다.
+                gubun = cgubuns[jcb_gubuns.getSelectedIndex()];
+                System.out.println("선택한 컬럼명은 "+gubun);//gubun은 멤버변수로 한다.
+            }//////// 콤보박스에서 선택한 값이 변경되었을 때 인터셉트 함
+        }////////// end of if
+    }//////////// end of itemStateChanged
 }
 /*
 메뉴바 추가하기

@@ -13,6 +13,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -36,11 +39,13 @@ public class BookDialog extends JDialog implements ActionListener {
     JScrollPane jsp = new JScrollPane(jp_center);
     JScrollPane jsp_info = new JScrollPane(jta_info);
     String path = "src\\image\\book\\";
-
+    //파일 열기와 관련된 객체 생성하기
+    JFileChooser chooser = new JFileChooser();
     JPanel jp_south = new JPanel();
     //입력일 때와 수정일 때 가 다르게 처리해야 합니다.
     JButton jb_save = new JButton("저장");
     JButton jb_close = new JButton("닫기");
+    Container cont = getContentPane();
     BookDialog(BookApp ba){
         System.out.println(ba);//null출력되니까. 이러면 메소드 호출이 불가함
         this.ba = ba;
@@ -117,6 +122,8 @@ public class BookDialog extends JDialog implements ActionListener {
         jp_center.add(jlb_img);
 
         jp_south.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        //파일찾기 버튼 이벤트 소스와 이벤트 처리 클래스 연결하기
+        jbtn_file.addActionListener(this);
         jb_save.addActionListener(this);
         jb_close.addActionListener(this);
         jp_south.add(jb_save);
@@ -129,7 +136,41 @@ public class BookDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == jb_close){
+        if(obj == jbtn_file){//파일찾기 버튼 누른거야
+            //[열기]대화상자를 오픈한다.
+            //경로를 줄 때 상대경로[그대로 재사용이 가능함]와 절대경로[처음부터 끝까지 다주는 것-경로를 일일이 바꾼다.]
+            chooser.setCurrentDirectory(new File(".\\src"));
+            int intRet = chooser.showOpenDialog(this);
+            //yes나 ok버튼을 누른경우 처리하기
+            if(intRet == JFileChooser.APPROVE_OPTION){
+                //파일을 여는 처리를 한다.
+                //파일과 관련된 처리도 경로가 안 맞는 경우이거나 파일에 문제가 있을 수 있어
+                //반드시 예외처리를 하도록 강제하고 있습니다.
+                try{
+                    File file = chooser.getSelectedFile();
+                    //선택한 파일의 절대경로를 통해서 BufferedReader객체를 작성
+                    BufferedReader myReader = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+                    //System.out.println(file.getAbsoluteFile());
+                    String cpath = file.getAbsolutePath();
+                    jtf_file.setText(cpath);
+                    ////////////////// 이미지 미리보기 시작 ///////////////////
+                    ImageIcon icon = new ImageIcon(cpath);
+                    Image originalImg = icon.getImage();
+                    Image changeImg = originalImg.getScaledInstance(300, 400, Image.SCALE_SMOOTH);
+                    ImageIcon changeIcon = new ImageIcon(changeImg);
+                    jlb_img.setIcon(changeIcon);
+                    //revalidate()는 새 구성 요소가 추가되거나 이전 구성 요소가 제거되면
+                    //컨테이너에서 호출됩니다.
+                    //이 호출은 레이아웃 관리자에게 새 구성 요소 목록을 기반으로 재설정하도록
+                    //지시하는 명령 입니다.
+                    cont.revalidate();
+                    ////////////////// 이미지 미리보기 시작 ///////////////////
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        else if(obj == jb_close){
             this.dispose();
         }
         else if(obj == jb_save){
@@ -140,16 +181,25 @@ public class BookDialog extends JDialog implements ActionListener {
                 pbvo.setB_author(getAuthor());
                 pbvo.setB_publish(getPublish());
                 pbvo.setB_info(getInfo());
+                pbvo.setB_img(getImg());
                 int result = bdao.bookInsert(pbvo);
                 if(result == 1){
-                    ba.refreshData();
+                    BookVO bvo = new BookVO();
+                    pbvo.setB_no(0);
+                    pbvo.setGubun("전체");
+                    pbvo.setKeyword("");
+                    ba.refreshData(bvo);
                 }
             }
             //너 수정이니?
             else{
 
             }
-            ba.refreshData();
+            BookVO bvo = new BookVO();
+            bvo.setB_no(0);
+            bvo.setGubun("전체");
+            bvo.setKeyword("");
+            ba.refreshData(bvo);
             this.setVisible(false);
         }
     }
