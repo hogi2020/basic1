@@ -1,11 +1,26 @@
 package jdbc.book;
 
 import javax.swing.*;
+import java.awt.print.Book;
 import java.util.List;
 
 public class BookDaoTest {
     JFrame frame = new JFrame();
     BookDao bookDao = new BookDao();
+    public int bookUpdate(BookVO pbvo) {//메소드 오버로딩이다.
+        int result = -1;
+        pbvo = new BookVO();
+        pbvo.setB_name("제목8");
+        pbvo.setB_author("저자8");
+        pbvo.setB_publish("출판사8");
+        pbvo.setB_no(8);
+        result = bookDao.bookUpdate(pbvo);
+        return result;
+    }
+    public int bookUpdate(int b_no, String b_name, String b_author, String b_publish) {
+        int result = -1;
+        return result;
+    }
     public int bookDeleteTest(int b_no){
         int result = -1;
         result = bookDao.bookDelete(b_no);
@@ -27,9 +42,16 @@ public class BookDaoTest {
         //System.out.println(bList.get(2).getB_name());
         //System.out.println(bList.get(3).getB_author());
     }
+    /*
+    자바에서는 입력,수정,삭제시에 오토커밋이 일어나고 있다.
+    그래서 rollback을 하더라도 이전 상태로 돌아갈 수 없다.
+     */
     public static void main(String[] args) {
         BookDaoTest bdt = new BookDaoTest();
         int result = -1;
+        result = bdt.bookUpdate(null);
+        System.out.println("성공 여부 : "+result);
+        /*
         result = bdt.bookDeleteTest(4);
         if(result == 1){
             JOptionPane.showMessageDialog(bdt.frame,"삭제성공하였습니다.");
@@ -49,6 +71,8 @@ public class BookDaoTest {
             JOptionPane.showMessageDialog(bdt.frame,"입력 실패 하였습니다.");
             return;
         }
+
+         */
     }
 }
 /*

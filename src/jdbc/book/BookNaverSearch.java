@@ -8,15 +8,28 @@ import okhttp3.Response;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-public class BookNaverSearch extends JDialog {
+public class BookNaverSearch extends JDialog implements ActionListener, ItemListener {
     BookApp ba = null;
+    JPanel jp_north = new JPanel();
+    String[] starts = {"시작위치","1","2","3","4","5"};
+    String[] displays = {"검색결과","10","20","30","40","50"};
     String[] cols = {"도서번호","도서명", "저자","출판사"};
+
+    JTextField jtf_keyword = new JTextField(40);
+    JComboBox jcb_starts = new JComboBox(starts);
+    JComboBox jcb_displays = new JComboBox(displays);
+    int start =0;
+    int display = 0;
     String[][] data = new String[0][4];
     DefaultTableModel dtm_book = new DefaultTableModel(data, cols);
     JTable jtb_book = new JTable(dtm_book);
@@ -30,9 +43,6 @@ public class BookNaverSearch extends JDialog {
     public BookNaverSearch(BookApp ba) {
         this.ba = ba;
         initDisplay();
-        String query = JOptionPane.showInputDialog("검색어를 입력하세요.");
-        List<Map<String,Object>> list = searchBooks(query);
-        refreshData(list);
     }
     public void refreshData(List<Map<String,Object>> list){
         for(int i=0;i < list.size();i++){
@@ -45,12 +55,15 @@ public class BookNaverSearch extends JDialog {
             dtm_book.addRow(v);
         }
     }
-    public List<Map<String,Object>> searchBooks(String query){
+    public List<Map<String,Object>> searchBooks(String query, int start, int display){
         List<Map<String,Object>> list = null;
-
+        if(start == 0 || display== 0){
+            start =1;
+            display =10;
+        }
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(apiURL+"?query="+query)
+                .url(apiURL+"?query="+query+"&start="+start+"&display="+display)
                 .addHeader("X-Naver-Client-Id", clientId)
                 .addHeader("X-Naver-Client-Secret", clientSecret)
                 .build();
@@ -71,11 +84,55 @@ public class BookNaverSearch extends JDialog {
     public void initDisplay(){
         //System.out.println("initDisplay");
         //System.out.println(this.ba);//null
-        this.add(jsp_book);
+        jtf_keyword.addActionListener(this);
+        jcb_starts.addItemListener(this);
+        jcb_displays.addItemListener(this);
+        jp_north.add(jtf_keyword);
+        jp_north.add(jcb_starts);
+        jp_north.add(jcb_displays);
+        this.add("North", jp_north);
+        this.add("Center", jsp_book);
         this.setSize(700,500);
-        this.setVisible(true);
+        this.setVisible(false);
     }
     public static void main(String[] args) {
         new BookNaverSearch(null);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object obj = e.getSource();
+        String query = jtf_keyword.getText();
+        if (obj == jtf_keyword) {
+            List<Map<String,Object>> list = searchBooks(query, start, display);
+            //dtm의 로우 수가 0보다 크다는건 조회결과가 있다.
+            //이전에 처리된 내용은 삭제 처리하기 - 초기화
+            while(dtm_book.getRowCount() > 0){
+                dtm_book.removeRow(0);
+            }
+            refreshData(list);
+            jtf_keyword.setText("");
+        }
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        Object obj = e.getSource();
+        if(obj == jcb_starts){
+            if(e.getStateChange() == ItemEvent.SELECTED){
+                if(!"시작위치".equals(starts[jcb_starts.getSelectedIndex()])){
+                    start = Integer.parseInt(starts[jcb_starts.getSelectedIndex()]);
+                }
+                System.out.println("선택한 컬럼명은 "+start);//gubun은 멤버변수로 한다.
+            }//////// 콤보박스에서 선택한 값이 변경되었을 때 인터셉트 함
+        }////////// end of if
+        if(obj == jcb_displays){
+            if(e.getStateChange() == ItemEvent.SELECTED){
+                if(!"검색결과".equals(displays[jcb_displays.getSelectedIndex()])){
+                    display = Integer.parseInt(displays[jcb_displays.getSelectedIndex()]);
+                }
+                System.out.println("선택한 컬럼명은 "+display);//gubun은 멤버변수로 한다.
+            }//////// 콤보박스에서 선택한 값이 변경되었을 때 인터셉트 함
+        }////////// end of if
     }
 }

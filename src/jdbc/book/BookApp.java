@@ -112,7 +112,33 @@ public class BookApp extends JFrame implements ActionListener, ItemListener {
     //수정일때 호출 - 수정버튼 | 수정 메뉴 아이템 일때
     public void updateActionPerformed(){
         System.out.println("수정버튼 | 수정 메뉴 아이템 일때");
-        bd.set("수정",true, null, true);
+
+        int one = -1;
+        one = jtb_book.getSelectedRow();
+        int b_no = 0;//select문 where b_no = ?
+        b_no = Integer.parseInt(dtm_book.getValueAt(one, 0).toString());
+        if(one < 0) {
+            JOptionPane.showMessageDialog(this, "상세조회할 로우를 선택하세요."
+                    , "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        BookVO pbvo = new BookVO();
+        //b_no = 0인 상태
+        pbvo.setB_no(b_no);//0이었지만 여기서 값이 바뀜. 0보다 큰 값으로 변함
+        List<BookVO> bList = bDao.getBookList(pbvo);//pk 있어서 한 건만 조회
+        //bList.size()=1
+        if(bList.size() == 1){
+            BookVO bvo = bList.get(0);//사용자가 선택한 로우의 값을 담았다. 난 null아니야
+            //4번째 파라미터는 JTextField의 수정 여부를 결정함
+            //bd.set("상세보기",true, bvo, false);상세보기는 read only
+            bd.set("수정",true, bvo, true);
+        }else{
+            JOptionPane.showMessageDialog(this, "조회결과가 없습니다."
+                    , "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+
     }
     //삭제 일때 호출 - 삭제버튼 | 삭제 메뉴 아이템 일때
     public void deleteActionPerformed(){

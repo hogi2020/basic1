@@ -124,10 +124,33 @@ public class BookDao {
      *              ,b_publish =?
      *    WHERE b_no = ?
      * @param bvo
-     * @return
+     * @return 1이면 수정 성공, 0이면 수정 실패
      ******************************************************************/
     public int bookUpdate(BookVO bvo) {
         int result = -1;//1이면 수정 성공, 0이면 수정 실패, 그래서 초기값을 -1로 함
+        StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE book152");
+        sql.append("       SET b_name = ?");
+        sql.append("            , b_author = ?");
+        sql.append("            , b_publish = ?");
+        sql.append("  WHERE b_no = ?");
+        try {
+            conn = dbMgr.getConnection();
+            //update, insert, delete를 하자마자 즉시 커밋이 발동함.
+            //conn.setAutoCommit(true);생략할 수 있다.
+            pstmt = conn.prepareStatement(sql.toString());
+            pstmt.setString(1, bvo.getB_name());
+            pstmt.setString(2, bvo.getB_author());
+            pstmt.setString(3, bvo.getB_publish());
+            pstmt.setInt(4, bvo.getB_no());
+            result = pstmt.executeUpdate();
+        } catch (SQLException se){
+            System.out.println(sql.toString());
+        }catch(Exception e){
+
+        }finally{
+            dbMgr.freeConnection(conn, pstmt);
+        }
         return result;
     }
     public int bookUpdate(int b_no, String b_name, String b_author, String b_publish){
