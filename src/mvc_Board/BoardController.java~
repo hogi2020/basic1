@@ -1,0 +1,17 @@
+package mvc_Board;
+
+public class BoardController {
+    BoardLogic bLogic = new BoardLogic();
+
+    public static final String _ALL = "selectAll";
+    public static final String _ONE = "selectOne";
+    public static final String _INS = "insert";
+    public static final String _UPD = "update";
+    public static final String _DEL = "delete";
+
+    public BoardVO send(BoardVO pbvo){
+        String command = pbvo.getCommand();
+
+    }
+
+}
